@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d10" />
+  <title>Pixel Paper Mapper V4</title>
+  <style>
+    :root{
+      --bg:#0b0d10;
+      --bg-2:#11161d;
+      --panel:#14181d;
+      --panel-soft:#101419;
+      --panel-2:#0f141a;
+      --text:#f5f7fa;
+      --muted:#9aa5b1;
+      --line:#2a323c;
+      --accent:#6aa8ff;
+      --accent-2:#8dc0ff;
+      --accent-soft:rgba(106,168,255,.15);
+      --accent-line:rgba(106,168,255,.45);
+      --danger:#ff7b7b;
+      --good:#55d38a;
+      --warn:#ffc86a;
+      --glow:0 0 18px rgba(106,168,255,.12);
+      --shadow:0 16px 40px rgba(0,0,0,.28);
+      --radius:18px;
+      --star-1: rgba(255,255,255,.15);
+      --star-2: rgba(138,186,255,.20);
+      --paper-bg:#f8f8f4;
+      --paper-line:#d8d8d0;
+    }
+    body.theme-light{
+      --bg:#eef3fb;
+      --bg-2:#e4edf9;
+      --panel:#ffffff;
+      --panel-soft:#f5f8fd;
+      --panel-2:#eef4fb;
+      --text:#16212e;
+      --muted:#5e6b79;
+      --line:#d5deea;
+      --accent:#376cff;
+      --accent-2:#4f80ff;
+      --accent-soft:rgba(55,108,255,.10);
+      --accent-line:rgba(55,108,255,.38);
+      --glow:0 0 16px rgba(55,108,255,.11);
+      --shadow:0 14px 32px rgba(13,35,67,.10);
+      --star-1: rgba(34,57,94,.05);
+      --star-2: rgba(55,108,255,.08);
+      --paper-bg:#fffefb;
+      --paper-line:#dbddd7;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg); -webkit-text-size-adjust:100%; overscroll-behavior:none}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 18%, var(--star-1) 0 1.3px, transparent 1.5px),
+        radial-gradient(circle at 30% 70%, var(--star-2) 0 1.1px, transparent 1.3px),
+        radial-gradient(circle at 83% 16%, var(--star-1) 0 1.5px, transparent 1.7px),
+        radial-gradient(circle at 68% 82%, var(--star-2) 0 1.1px, transparent 1.3px),
+        radial-gradient(circle at 87% 58%, var(--star-1) 0 1.2px, transparent 1.4px),
+        radial-gradient(circle at 48% 28%, var(--star-2) 0 0.9px, transparent 1.1px),
+        linear-gradient(180deg,var(--bg-2),var(--bg));
+      background-size: 360px 360px, 420px 420px, 510px 510px, 440px 440px, 390px 390px, 300px 300px, auto;
+      touch-action:manipulation;
+    }
+    button,input,select{font:inherit}
+    button{touch-action:manipulation; cursor:pointer}
+    .hidden{display:none !important}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+
+    .app{width:min(920px,100%); margin:0 auto; padding:calc(16px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+    .hero{padding:8px 4px 10px}
+    .hero-top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+    .kicker{margin:0; font-size:12px; letter-spacing:.16em; font-weight:800; color:var(--accent)}
+    h1{margin:0 0 10px; font-size:31px; line-height:1.04; letter-spacing:-.03em}
+    .lead{margin:0; color:var(--muted); line-height:1.5; font-size:15px}
+    .hero-badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+    .pill{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); background:rgba(255,255,255,.03); padding:8px 11px; border-radius:999px; color:var(--muted); font-size:12px}
+
+    .panel{margin-top:16px; border:1px solid var(--line); background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.01)), var(--panel); border-radius:var(--radius); box-shadow:0 1px 0 rgba(255,255,255,.03) inset}
+    .panel-inner{padding:18px}
+    .panel-header{display:flex; gap:12px; align-items:flex-start; justify-content:space-between; padding:18px 18px 0}
+    .panel-title-wrap{display:flex; gap:12px; min-width:0}
+    .panel-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .step{width:30px; height:30px; flex:0 0 30px; display:grid; place-items:center; border-radius:10px; border:1px solid var(--accent-line); background:var(--accent-soft); color:var(--accent); font-weight:900; box-shadow:var(--glow)}
+    .section-copy h2{margin:1px 0 4px; font-size:20px; line-height:1.12}
+    .section-copy p{margin:0; font-size:13px; line-height:1.45; color:var(--muted)}
+    .collapse-btn,.mini-btn,.toolbar-btn,.chip,.btn{
+      border:1px solid var(--line); background:var(--panel-soft); color:var(--text); border-radius:12px; min-height:40px; padding:0 12px;
+      transition:transform .12s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .collapse-btn:active,.mini-btn:active,.toolbar-btn:active,.chip:active,.btn:active{transform:scale(.985)}
+    .collapse-btn.active,.mini-btn.active,.toolbar-btn.active,.chip.active,.btn.primary{border-color:var(--accent-line); background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02)); box-shadow:var(--glow)}
+    .collapse-btn{min-width:44px; padding:0 14px; font-weight:800}
+    .panel-content{padding:16px 18px 18px}
+    .muted{margin:0; color:var(--muted); font-size:13px; line-height:1.45}
+    h3{margin:18px 0 8px; font-size:16px}
+
+    .upload{min-height:124px; border:1.5px dashed #425264; border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center; padding:20px; background:var(--panel-soft)}
+    .upload-icon{width:42px;height:42px; display:grid; place-items:center; border-radius:12px; background:var(--accent-soft); color:var(--accent); font-size:25px; box-shadow:var(--glow)}
+    .image-info{margin-top:12px; padding:12px 13px; border-radius:13px; background:var(--panel-soft); border:1px solid var(--line); display:flex; justify-content:space-between; gap:12px; align-items:center}
+    .image-info span{color:var(--muted); font-size:13px}
+    .image-info strong{font-size:15px; font-variant-numeric:tabular-nums}
+
+    .fields,.controls-grid,.metrics,.margin-grid,.coords,.editor-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .field label{display:block; margin-bottom:7px; font-size:13px; font-weight:800; color:var(--text)}
+    .field small{display:block; margin-top:6px; font-size:12px; color:var(--muted); line-height:1.35}
+    .input-wrap,.select-wrap{display:flex; align-items:center; border:1px solid var(--line); border-radius:13px; overflow:hidden; background:var(--panel-soft)}
+    .input-wrap:focus-within,.select-wrap:focus-within{border-color:var(--accent-line); box-shadow:0 0 0 3px var(--accent-soft), var(--glow)}
+    .input-wrap input,.select-wrap select{width:100%; min-width:0; border:0; background:transparent; outline:0; color:var(--text); padding:13px 12px; font-size:16px}
+    .input-wrap span{padding:0 12px; color:var(--muted); font-size:13px}
+    .small-actions,.chips,.bulk-actions{display:flex; flex-wrap:wrap; gap:8px}
+    .small-actions .mini-btn{min-height:36px; font-size:13px; font-weight:800}
+    .slider-block{margin-top:16px; padding-top:15px; border-top:1px solid var(--line)}
+    .slider-row{display:flex; justify-content:space-between; gap:10px; align-items:center}
+    .slider-row label{font-weight:800; font-size:14px}
+    .slider-row output{color:var(--accent); font-weight:900; font-variant-numeric:tabular-nums; text-shadow:0 0 12px rgba(106,168,255,.25)}
+    input[type=range]{width:100%; margin:12px 0 6px; accent-color:var(--accent)}
+    .warning{margin-top:12px; color:#ffd8d8; background:rgba(255,123,123,.09); border:1px solid rgba(255,123,123,.26); padding:10px 12px; border-radius:12px; font-size:13px}
+
+    .metric,.coord,.tile{padding:13px; border:1px solid var(--line); border-radius:14px; background:var(--panel-soft)}
+    .metric span,.coord span,.tile span{display:block; color:var(--muted); font-size:12px; margin-bottom:5px}
+    .metric strong,.coord strong,.tile strong{display:block; font-size:18px; font-variant-numeric:tabular-nums; word-break:break-word}
+    .coord strong{font-size:14px; line-height:1.35}
+
+    .paper-stage{margin-top:16px; padding:16px; display:grid; place-items:center; border:1px solid var(--line); border-radius:16px; background:var(--panel-soft)}
+    .paper{position:relative; background:var(--paper-bg); border:1px solid var(--paper-line); border-radius:4px; box-shadow:var(--shadow); max-width:100%; max-height:420px; overflow:hidden}
+    .paper-image{position:absolute; border:1.5px solid #4b8de7; box-shadow:0 0 10px rgba(75,141,231,.28); background:#dce8f8}
+    .axis-label{position:absolute; color:#67727f; font-size:10px; font-weight:800; user-select:none}
+    .axis-x{left:7px; bottom:4px}.axis-y{left:4px; bottom:17px; writing-mode:vertical-rl; transform:rotate(180deg)}
+    .origin-dot{position:absolute; left:3px; bottom:3px; width:5px; height:5px; border-radius:50%; background:#333}
+
+    .toolbar-grid{display:grid; gap:10px; margin-bottom:12px}
+    .toolbar-row{display:grid; gap:10px}
+    .segmented{display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; border:1px solid var(--line); border-radius:14px; background:var(--panel-soft)}
+    .segmented button{min-height:44px; border:0; border-radius:10px; background:transparent; color:var(--muted); font-weight:900}
+    .segmented button.active{color:var(--text); background:var(--accent-soft); box-shadow:inset 0 0 0 1px rgba(106,168,255,.22), var(--glow)}
+    .zoom-bar{display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:8px}
+    .toolbar-btn{min-height:44px; font-size:15px; font-weight:800; padding:0 10px}
+    .zoom-readout{min-height:44px; display:grid; place-items:center; border:1px solid var(--line); border-radius:12px; background:var(--panel-soft); color:var(--accent-2); font-weight:900; font-variant-numeric:tabular-nums}
+    .color-row{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center}
+    .color-input{width:48px; height:44px; border-radius:12px; border:1px solid var(--line); background:var(--panel-soft)}
+
+    .crosshair-panel{margin-top:10px; padding:14px; border:1px solid var(--line); border-radius:15px; background:var(--panel-soft); display:grid; gap:12px}
+    .crosshair-preview-wrap{display:grid; grid-template-columns:120px 1fr; gap:12px; align-items:center}
+    .preview-box{height:120px; border:1px solid var(--line); border-radius:14px; background:#0b0f14; display:grid; place-items:center}
+    .preview-box canvas{display:block; width:100px; height:100px}
+    .slider-mini label{display:flex; justify-content:space-between; gap:10px; font-size:13px; font-weight:800; color:var(--text)}
+    .slider-mini output{color:var(--accent); font-variant-numeric:tabular-nums}
+    .mode-help{padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--panel-2); color:var(--muted); font-size:12px; line-height:1.45}
+
+    .focus-toggle{position:sticky; top:0; z-index:6; background:linear-gradient(180deg, rgba(20,24,29,.95), rgba(20,24,29,.72)); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); padding-bottom:10px; margin-bottom:8px}
+    body.theme-light .focus-toggle{background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.82))}
+    .status-pill{display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted); font-size:12px}
+    .exit-focus{display:none}
+    body.focus-mode{overflow:hidden}
+    body.focus-mode .app{padding:0}
+    body.focus-mode .hero, body.focus-mode #uploadPanel, body.focus-mode #paperPanel, body.focus-mode #resultsPanel, body.focus-mode footer{display:none !important}
+    body.focus-mode #pickerPanel{position:fixed; inset:0; z-index:9999; margin:0; border-radius:0; border:0; background:linear-gradient(180deg, rgba(15,20,26,.98), rgba(11,13,16,.98)); overflow:auto}
+    body.focus-mode.theme-light #pickerPanel{background:linear-gradient(180deg, rgba(246,249,253,.98), rgba(238,243,251,.98))}
+    body.focus-mode #pickerPanel .panel-content{padding-top:12px}
+    body.focus-mode .exit-focus{display:inline-flex}
+    body.focus-mode .canvas-wrap{min-height:74vh}
+
+    .canvas-wrap{position:relative; min-height:300px; border-radius:15px; overflow:hidden; border:1px solid var(--line); background:#070a0d; touch-action:none}
+    canvas.main-canvas{display:block; width:100%; height:auto; touch-action:none}
+    .canvas-badge{position:absolute; left:10px; top:10px; z-index:4; padding:7px 9px; border-radius:999px; background:rgba(8,12,17,.72); border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:#dbeaff; font-size:11px; font-weight:900; pointer-events:none}
+    body.theme-light .canvas-badge{background:rgba(255,255,255,.76); color:#24436c; border-color:rgba(0,0,0,.08)}
+    .loupe{position:absolute; right:12px; top:12px; z-index:4; width:120px; height:120px; border-radius:50%; overflow:hidden; border:2px solid rgba(106,168,255,.52); box-shadow:0 0 0 3px rgba(255,255,255,.06), 0 0 26px rgba(106,168,255,.22); background:#000}
+    .loupe canvas{display:block; width:100%; height:100%}
+    .minimap{position:absolute; right:12px; bottom:12px; z-index:4; width:116px; height:116px; border-radius:12px; overflow:hidden; background:rgba(10,14,18,.92); border:1px solid rgba(255,255,255,.12); box-shadow:0 6px 18px rgba(0,0,0,.24)}
+    body.theme-light .minimap{background:rgba(255,255,255,.95); border-color:rgba(0,0,0,.08)}
+    .quick-actions{position:absolute; z-index:5; display:flex; gap:6px; transform:translate(-50%, -120%)}
+    .quick-actions button{min-width:32px; height:32px; padding:0 10px; border-radius:10px; border:1px solid #394553; background:rgba(10,14,18,.94); color:#fff; font-weight:900; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+    .quick-actions .danger{border-color:rgba(255,123,123,.44); color:#ffd4d4}
+    .quick-actions .warn{border-color:rgba(255,200,106,.44); color:#ffe1ad}
+    .quick-actions .good{border-color:rgba(85,211,138,.44); color:#dcffe9}
+    .tap-note{margin:10px 2px 0; color:var(--muted); font-size:12px; line-height:1.5}
+
+    .point-card{margin-top:12px; border:1px solid var(--line); border-radius:15px; overflow:hidden; background:var(--panel-soft)}
+    .point-empty{padding:18px; text-align:center; color:var(--muted); font-size:13px}
+    .point-row{display:grid; grid-template-columns:1fr; gap:0}
+    .point-box{padding:14px; border-bottom:1px solid var(--line)}
+    .point-box:last-child{border-bottom:0}
+    .point-box span{display:block; color:var(--muted); font-size:12px; margin-bottom:4px}
+    .point-box strong{display:block; font-size:18px; line-height:1.25; font-variant-numeric:tabular-nums}
+    .point-box small{display:block; margin-top:5px; color:var(--muted); font-size:11px; line-height:1.4}
+    .point-box.accent{background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.01))}
+    .editor-block{padding:14px; border-top:1px solid var(--line); background:var(--panel-2); display:grid; gap:10px}
+    .actions{padding:12px; display:grid; gap:8px; grid-template-columns:1fr 1fr}
+    .btn{min-height:46px; font-weight:800}
+
+    .points-list{display:grid; gap:12px; margin-top:12px}
+    .group-section{border:1px solid var(--line); border-radius:15px; overflow:hidden; background:var(--panel-soft)}
+    .group-head{padding:11px 12px; background:var(--panel-2); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .group-head strong{font-size:13px}.group-head span{font-size:12px; color:var(--muted)}
+    .point-list-item{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:11px 12px; border-top:1px solid var(--line)}
+    .point-list-item:first-child{border-top:0}
+    .point-token{min-width:40px; height:32px; padding:0 8px; border-radius:9px; display:grid; place-items:center; color:#fff; font-size:12px; font-weight:900; border:1px solid rgba(255,255,255,.14)}
+    .point-summary strong{display:block; font-size:13px; font-variant-numeric:tabular-nums}
+    .point-summary span{display:block; margin-top:3px; color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums}
+    .row-actions{display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end}
+    .row-actions button{width:34px; height:34px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--text)}
+
+    footer{padding:22px 6px 0; color:var(--muted); font-size:12px; line-height:1.45; text-align:center}
+    @media (min-width:700px){
+      .app{padding-left:22px; padding-right:22px}
+      h1{font-size:38px}
+      .toolbar-grid{grid-template-columns:1fr 1fr}
+      .point-row{grid-template-columns:1fr 1fr}
+      .point-box{border-right:1px solid var(--line); border-bottom:0}
+      .point-box:last-child{border-right:0}
+      .controls-grid{grid-template-columns:repeat(4,1fr)}
+    }
+    @media (max-width:560px){
+      .fields,.controls-grid,.metrics,.margin-grid,.coords,.editor-grid,.actions{grid-template-columns:1fr}
+      .zoom-bar{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .crosshair-preview-wrap{grid-template-columns:1fr}
+      .panel-header{padding-right:14px}
+      .panel-content{padding:16px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="hero-top">
+        <p class="kicker">PIXEL → PAPEL</p>
+        <div class="small-actions">
+          <button id="themeDark" class="mini-btn active" type="button">🌙 Oscuro</button>
+          <button id="themeLight" class="mini-btn" type="button">☀️ Claro</button>
+        </div>
+      </div>
+      <h1>Pixel Paper Mapper</h1>
+      <p class="lead">Versión corregida: preset de preferencias, secciones desplegables, reglas fijas en zoom, crosshair con modo para mover la imagen y tema claro/oscuro con toque espacial minimalista.</p>
+      <div class="hero-badges">
+        <span class="pill">🔒 Todo se procesa en tu dispositivo</span>
+        <span class="pill">📐 Mantiene proporción real</span>
+        <span class="pill">📍 Puntos, lupa, crosshair y minimapa</span>
+      </div>
+    </header>
+
+    <section id="uploadPanel" class="panel">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <div class="step">1</div>
+          <div class="section-copy">
+            <h2>Seleccionar imagen</h2>
+            <p>Este bloque siempre queda visible. Detectaremos automáticamente sus dimensiones reales en píxeles.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel-content">
+        <label class="upload" for="imageInput">
+          <span class="upload-icon">＋</span>
+          <strong>Elegir imagen</strong>
+          <small>Desde Fotos o Archivos del iPhone</small>
+        </label>
+        <input id="imageInput" class="sr-only" type="file" accept="image/*" />
+        <div id="imageInfo" class="image-info hidden"><span>Dimensiones originales</span><strong id="imageDimensions">—</strong></div>
+      </div>
+    </section>
+
+    <section id="paperPanel" class="panel collapsible">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <div class="step">2</div>
+          <div class="section-copy">
+            <h2>Hoja, presets y preferencias</h2>
+            <p>Aquí eliges el tamaño físico del papel, orientación, alineación y escala máxima.</p>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button class="collapse-btn active" data-toggle="paperPanelContent" type="button">▾</button>
+        </div>
+      </div>
+      <div id="paperPanelContent" class="panel-content">
+        <div class="controls-grid">
+          <div class="field">
+            <label for="paperPreset">Preset de hoja</label>
+            <div class="select-wrap"><select id="paperPreset">
+              <option value="pref" selected>Preferencias</option>
+              <option value="custom">Personalizada</option>
+              <option value="a4">A4</option>
+              <option value="a5">A5</option>
+              <option value="a3">A3</option>
+              <option value="letter">Carta</option>
+              <option value="legal">Oficio / Legal</option>
+            </select></div>
+            <small>“Preferencias” usa tus medidas favoritas: 21.6 × 28 cm.</small>
+          </div>
+          <div class="field">
+            <label>Orientación</label>
+            <div class="small-actions">
+              <button id="orientationPortrait" class="mini-btn active" type="button">Vertical</button>
+              <button id="orientationLandscape" class="mini-btn" type="button">Horizontal</button>
+            </div>
+            <small>Intercambia ancho y alto.</small>
+          </div>
+          <div class="field">
+            <label for="alignX">Alineación horizontal</label>
+            <div class="select-wrap"><select id="alignX">
+              <option value="left">Izquierda</option>
+              <option value="center" selected>Centro</option>
+              <option value="right">Derecha</option>
+            </select></div>
+            <small>Cómo se coloca la imagen dentro del papel.</small>
+          </div>
+          <div class="field">
+            <label for="alignY">Alineación vertical</label>
+            <div class="select-wrap"><select id="alignY">
+              <option value="bottom">Abajo</option>
+              <option value="center" selected>Centro</option>
+              <option value="top">Arriba</option>
+            </select></div>
+            <small>También sin deformar la imagen.</small>
+          </div>
+        </div>
+
+        <div class="fields" style="margin-top:12px">
+          <div class="field">
+            <label for="paperWidth">Ancho de hoja · X</label>
+            <div class="input-wrap"><input id="paperWidth" type="text" inputmode="decimal" value="21.6" /><span>cm</span></div>
+            <small>De izquierda a derecha.</small>
+          </div>
+          <div class="field">
+            <label for="paperHeight">Alto de hoja · Y</label>
+            <div class="input-wrap"><input id="paperHeight" type="text" inputmode="decimal" value="28" /><span>cm</span></div>
+            <small>De abajo hacia arriba.</small>
+          </div>
+        </div>
+
+        <div class="slider-block">
+          <div class="slider-row"><label for="fitPercent">Tamaño dentro de la hoja</label><output id="fitOutput">82%</output></div>
+          <input id="fitPercent" type="range" min="55" max="98" step="1" value="82" />
+          <p class="muted">Escala uniforme. Nunca estira la imagen.</p>
+        </div>
+        <div id="warning" class="warning hidden"></div>
+      </div>
+    </section>
+
+    <section id="resultsPanel" class="panel collapsible hidden">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <div class="step">3</div>
+          <div class="section-copy">
+            <h2>Escala y previsualización</h2>
+            <p>Te muestra exactamente cuánto medirá la imagen en cm y dónde empieza y termina.</p>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button class="collapse-btn active" data-toggle="resultsPanelContent" type="button">▾</button>
+        </div>
+      </div>
+      <div id="resultsPanelContent" class="panel-content">
+        <div class="metrics">
+          <div class="metric"><span>Ancho de imagen</span><strong id="scaledWidth">—</strong></div>
+          <div class="metric"><span>Alto de imagen</span><strong id="scaledHeight">—</strong></div>
+          <div class="metric"><span>1 píxel equivale a</span><strong id="onePx">—</strong></div>
+          <div class="metric"><span>100 píxeles equivalen a</span><strong id="hundredPx">—</strong></div>
+        </div>
+
+        <h3>Vista de la hoja</h3>
+        <p class="muted">El origen físico (0,0) está en la esquina inferior izquierda de la hoja.</p>
+        <div class="paper-stage">
+          <div id="paper" class="paper">
+            <div id="paperImage" class="paper-image"></div>
+            <span class="origin-dot"></span>
+            <span class="axis-label axis-x">X →</span>
+            <span class="axis-label axis-y">Y →</span>
+          </div>
+        </div>
+
+        <h3>Márgenes</h3>
+        <div class="margin-grid">
+          <div class="metric"><span>Izquierda</span><strong id="marginLeft">—</strong></div>
+          <div class="metric"><span>Derecha</span><strong id="marginRight">—</strong></div>
+          <div class="metric"><span>Abajo</span><strong id="marginBottom">—</strong></div>
+          <div class="metric"><span>Arriba</span><strong id="marginTop">—</strong></div>
+        </div>
+
+        <h3>Las 4 esquinas de la imagen</h3>
+        <p class="muted">Coordenadas en cm medidas desde la esquina inferior izquierda de la hoja.</p>
+        <div class="coords">
+          <div class="coord"><span>↖ Superior izquierda</span><strong id="cornerTL">—</strong></div>
+          <div class="coord"><span>↗ Superior derecha</span><strong id="cornerTR">—</strong></div>
+          <div class="coord"><span>↙ Inferior izquierda</span><strong id="cornerBL">—</strong></div>
+          <div class="coord"><span>↘ Inferior derecha</span><strong id="cornerBR">—</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pickerPanel" class="panel collapsible hidden">
+      <div class="panel-header focus-toggle">
+        <div class="panel-title-wrap">
+          <div class="step">4</div>
+          <div class="section-copy">
+            <h2>Selector avanzado</h2>
+            <p>Puntos, crosshair, lupa, minimapa, edición, reglas fijas y exportación marcada.</p>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button id="toggleFocus" class="mini-btn" type="button">Pantalla completa</button>
+          <button id="exitFocus" class="mini-btn exit-focus" type="button">Salir</button>
+          <span id="editStatus" class="status-pill hidden">✏️ Editando punto</span>
+          <button class="collapse-btn active" data-toggle="pickerPanelContent" type="button">▾</button>
+        </div>
+      </div>
+      <div id="pickerPanelContent" class="panel-content">
+        <div class="toolbar-grid">
+          <div class="toolbar-row">
+            <div class="segmented"><button id="singleMode" class="active" type="button">1 punto</button><button id="multiMode" type="button">Múltiples</button></div>
+            <div class="segmented"><button id="fingerMode" class="active" type="button">Dedo</button><button id="crosshairMode" type="button">Crosshair</button></div>
+          </div>
+          <div class="toolbar-row">
+            <div class="zoom-bar">
+              <button id="undoBtn" class="toolbar-btn" type="button">↶</button>
+              <button id="redoBtn" class="toolbar-btn" type="button">↷</button>
+              <button id="zoomOut" class="toolbar-btn" type="button">−</button>
+              <div id="zoomReadout" class="zoom-readout">1.00×</div>
+              <button id="zoomIn" class="toolbar-btn" type="button">＋</button>
+              <button id="resetView" class="toolbar-btn" type="button">↺</button>
+              <button id="exportMarked" class="toolbar-btn" type="button">🖼️</button>
+              <button id="copyAllBtn" class="toolbar-btn" type="button">⧉</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-grid">
+          <div class="tile">
+            <span>Visuales</span>
+            <div class="chips">
+              <button id="toggleLabels" class="chip active" type="button">Etiquetas</button>
+              <button id="toggleGrid" class="chip" type="button">Cuadrícula</button>
+              <button id="togglePxRuler" class="chip" type="button">Regla px</button>
+              <button id="toggleCmRuler" class="chip active" type="button">Regla cm</button>
+              <button id="toggleMmRuler" class="chip" type="button">Regla mm</button>
+            </div>
+            <div class="controls-grid" style="margin-top:10px">
+              <div class="field">
+                <label for="gridUnit">Tipo de cuadrícula</label>
+                <div class="select-wrap"><select id="gridUnit">
+                  <option value="auto" selected>Automática</option>
+                  <option value="px">En píxeles</option>
+                  <option value="cm">En centímetros</option>
+                  <option value="mm">En milímetros</option>
+                </select></div>
+              </div>
+              <div class="field">
+                <label for="colorMode">Color de puntos</label>
+                <div class="select-wrap"><select id="colorMode">
+                  <option value="multi" selected>Multicolor</option>
+                  <option value="single">Un solo color</option>
+                </select></div>
+              </div>
+              <div class="field">
+                <label for="singleColor">Color único</label>
+                <input id="singleColor" class="color-input" type="color" value="#6aa8ff" />
+              </div>
+            </div>
+          </div>
+          <div class="tile">
+            <span>Acciones globales</span>
+            <div class="bulk-actions">
+              <button id="lockAllBtn" class="mini-btn" type="button">🔒 Bloquear todos</button>
+              <button id="unlockAllBtn" class="mini-btn" type="button">🔓 Desbloquear todos</button>
+              <button id="clearAllBtn" class="mini-btn" type="button">🗑️ Borrar todos</button>
+              <button id="copyAllBtn2" class="mini-btn" type="button">📋 Copiar todos</button>
+            </div>
+            <p class="muted" style="margin-top:10px">Puedes bloquear todos y luego desbloquear individualmente uno concreto desde la tabla o desde el propio punto.</p>
+          </div>
+        </div>
+
+        <div id="crosshairPanel" class="crosshair-panel hidden">
+          <div class="small-actions">
+            <button id="crosshairAim" class="mini-btn active" type="button">Apuntar</button>
+            <button id="crosshairPan" class="mini-btn" type="button">Mover imagen</button>
+          </div>
+          <div class="crosshair-preview-wrap">
+            <div class="preview-box"><canvas id="crosshairPreview" width="100" height="100"></canvas></div>
+            <div>
+              <p class="muted" style="margin-bottom:8px">“Apuntar” usa el dedo como referencia y separa la mira. “Mover imagen” te deja arrastrar la foto con un dedo cuando estás en zoom sin que salga la mira.</p>
+              <div class="slider-mini"><label for="crosshairAngle"><span>Ángulo</span><output id="crosshairAngleOut">315°</output></label><input id="crosshairAngle" type="range" min="0" max="360" step="1" value="315" /></div>
+              <div class="slider-mini"><label for="crosshairDistance"><span>Distancia</span><output id="crosshairDistanceOut">80 px</output></label><input id="crosshairDistance" type="range" min="10" max="220" step="1" value="80" /></div>
+              <div class="slider-mini"><label for="crosshairSize"><span>Tamaño de mira</span><output id="crosshairSizeOut">14 px</output></label><input id="crosshairSize" type="range" min="8" max="32" step="1" value="14" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="modeHelp" class="mode-help">Modo Dedo · 1 punto: tocas donde quieres y ese punto se reemplaza. Con zoom mayor a 1× puedes arrastrar la imagen.</div>
+
+        <div id="canvasWrap" class="canvas-wrap">
+          <div id="canvasBadge" class="canvas-badge">1 punto · 1.00×</div>
+          <canvas id="canvas" class="main-canvas"></canvas>
+          <div id="quickActions" class="quick-actions hidden"></div>
+          <div id="loupe" class="loupe hidden"><canvas id="loupeCanvas" width="120" height="120"></canvas></div>
+          <div id="minimap" class="minimap hidden"><canvas id="minimapCanvas" width="116" height="116"></canvas></div>
+        </div>
+        <p class="tap-note">📍 Dedo: toca para poner y arrastra con zoom. Crosshair: en “Apuntar”, mantén y mueve el dedo; al soltar, se coloca el punto. En “Mover imagen”, deslizas la imagen con un dedo sin que aparezca la mira.</p>
+
+        <div id="pointCard" class="point-card">
+          <div id="pointEmpty" class="point-empty">Todavía no has seleccionado ningún punto.</div>
+          <div id="pointData" class="hidden">
+            <div class="point-row">
+              <div class="point-box"><span id="selectedLabel">Punto seleccionado</span><strong id="pixelPoint">—</strong><small>Origen de píxeles: esquina superior izquierda. X → derecha, Y → abajo.</small></div>
+              <div class="point-box accent"><span>Posición sobre la hoja</span><strong id="cmPoint">—</strong><small>Origen físico: esquina inferior izquierda. X → derecha, Y → arriba.</small></div>
+            </div>
+            <div class="point-row">
+              <div class="point-box"><span>Dentro de la imagen, desde abajo-izquierda</span><strong id="insidePoint">—</strong></div>
+              <div class="point-box"><span>Escala activa</span><strong id="activeScale">—</strong></div>
+            </div>
+            <div class="editor-block">
+              <div class="editor-grid">
+                <div class="field"><label for="groupInput">Grupo / parte</label><div class="input-wrap"><input id="groupInput" type="text" placeholder="Ej. farol, ojo, borde..." /></div></div>
+                <div class="field"><label>Acciones del punto</label><div class="small-actions" style="margin-top:2px"><button id="toggleCurrentLock" class="mini-btn" type="button">Bloquear / desbloquear</button><button id="copyCurrent" class="mini-btn" type="button">Copiar</button><button id="editCurrent" class="mini-btn" type="button">Editar</button></div></div>
+              </div>
+            </div>
+            <div class="actions"><button id="clearCurrent" class="btn" type="button">Borrar punto actual</button><button id="clearAll" class="btn primary hidden" type="button">Borrar todos</button></div>
+          </div>
+        </div>
+
+        <div id="pointsList" class="points-list hidden"></div>
+      </div>
+    </section>
+
+    <footer>V4 · Corregida para móvil · Reglas fijas · Crosshair con modo mover imagen · Preferencias 21.6 × 28 cm.</footer>
+  </main>
+
+  <script>
+  (() => {
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+    const presets = {
+      pref: { w:21.6, h:28.0 },
+      a5: { w:14.8, h:21.0 },
+      a4: { w:21.0, h:29.7 },
+      a3: { w:29.7, h:42.0 },
+      letter: { w:21.59, h:27.94 },
+      legal: { w:21.59, h:35.56 }
+    };
+    const palette = ["#6aa8ff","#55d38a","#ffb86a","#e38bff","#ffd95e","#ff7b7b","#63e2ff","#f49ac2","#a2ff7a","#c0a8ff"];
+
+    let sourceImage = null, objectUrl = null, imageW = 0, imageH = 0, geometry = null;
+    let orientation = "portrait", mode = "single", inputMode = "finger", crosshairAction = "aim";
+    let points = [], activePointId = null, nextPointNumber = 1, editPointId = null;
+    let showLabels = true, gridOn = false, gridUnit = "auto", rulerPx = false, rulerCm = true, rulerMm = false;
+    let colorMode = "multi", singleColor = "#6aa8ff", theme = localStorage.getItem("ppm-theme") || "dark";
+    let view = { zoom:1, panX:0, panY:0 };
+    const MIN_ZOOM = 1, MAX_ZOOM = 12;
+    let touchAnchor = null, loupeImagePoint = null, showLoupe = false, quickActionsVisible = false;
+    let pointers = new Map(), gestureStart = null, pinchStart = null, moved = false, dragging = false;
+    let undoStack = [], redoStack = [];
+
+    const canvas = $("canvas");
+    const canvasWrap = $("canvasWrap");
+    const ctx = canvas.getContext("2d", { alpha:false });
+    const loupeCtx = $("loupeCanvas").getContext("2d");
+    const minimapCtx = $("minimapCanvas").getContext("2d");
+    const crosshairPreviewCtx = $("crosshairPreview").getContext("2d");
+
+    const parseDecimal = v => { const n = Number(String(v).trim().replace(",",".")); return Number.isFinite(n) ? n : NaN; };
+    const fmt = (v,d=3) => Number(v).toLocaleString("es-MX",{minimumFractionDigits:0,maximumFractionDigits:d});
+    const cm = v => `${fmt(v,3)} cm`;
+    const showWarning = m => { const w=$("warning"); w.textContent=m; w.classList.remove("hidden"); };
+    const hideWarning = () => { const w=$("warning"); w.textContent=""; w.classList.add("hidden"); };
+
+    function setTheme(t){
+      theme = t;
+      document.body.classList.toggle("theme-light", t === "light");
+      $("themeDark").classList.toggle("active", t === "dark");
+      $("themeLight").classList.toggle("active", t === "light");
+      localStorage.setItem("ppm-theme", t);
+      drawCanvas();
+    }
+
+    function copyText(text){
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(() => window.prompt("Copia este texto:", text));
+      else window.prompt("Copia este texto:", text);
+    }
+
+    function applyPreset(key){
+      if (key === "custom") return;
+      const p = presets[key];
+      if (!p) return;
+      const portrait = orientation === "portrait";
+      $("paperWidth").value = portrait ? p.w : p.h;
+      $("paperHeight").value = portrait ? p.h : p.w;
+    }
+
+    function updateOrientationButtons(){
+      $("orientationPortrait").classList.toggle("active", orientation === "portrait");
+      $("orientationLandscape").classList.toggle("active", orientation === "landscape");
+    }
+    function setOrientation(newOrientation){
+      if (newOrientation === orientation) return;
+      orientation = newOrientation;
+      updateOrientationButtons();
+      const w = parseDecimal($("paperWidth").value), h = parseDecimal($("paperHeight").value);
+      if (Number.isFinite(w) && Number.isFinite(h)) { $("paperWidth").value = h; $("paperHeight").value = w; }
+      updateAll();
+    }
+
+    function getInputs(){
+      const paperW = parseDecimal($("paperWidth").value);
+      const paperH = parseDecimal($("paperHeight").value);
+      const percent = Number($("fitPercent").value) / 100;
+      const alignX = $("alignX").value, alignY = $("alignY").value;
+      if (!Number.isFinite(paperW) || !Number.isFinite(paperH) || paperW<=0 || paperH<=0) return {valid:false};
+      return { valid:true, paperW, paperH, percent, alignX, alignY };
+    }
+
+    function computeGeometry(){
+      if (!sourceImage || !imageW || !imageH) return null;
+      const input = getInputs(); if (!input.valid) return null;
+      const { paperW, paperH, percent, alignX, alignY } = input;
+      const maxScale = Math.min(paperW / imageW, paperH / imageH);
+      const scale = maxScale * percent;
+      const scaledW = imageW * scale, scaledH = imageH * scale;
+      const freeX = paperW - scaledW, freeY = paperH - scaledH;
+      let marginLeft = 0, marginBottom = 0;
+      if (alignX === "center") marginLeft = freeX/2; else if (alignX === "right") marginLeft = freeX;
+      if (alignY === "center") marginBottom = freeY/2; else if (alignY === "top") marginBottom = freeY;
+      return { paperW,paperH,percent,alignX,alignY,scale,scaledW,scaledH,marginLeft,marginRight:paperW-scaledW-marginLeft,marginBottom,marginTop:paperH-scaledH-marginBottom };
+    }
+
+    function updateAll(){
+      $("fitOutput").textContent = `${$("fitPercent").value}%`;
+      if (!sourceImage) return;
+      const input = getInputs();
+      if (!input.valid){
+        showWarning("Escribe medidas válidas mayores que 0 para el ancho y el alto de la hoja.");
+        $("resultsPanel").classList.add("hidden");
+        $("pickerPanel").classList.add("hidden");
+        return;
+      }
+      hideWarning();
+      geometry = computeGeometry();
+      if (!geometry) return;
+      $("resultsPanel").classList.remove("hidden");
+      $("pickerPanel").classList.remove("hidden");
+
+      $("scaledWidth").textContent = cm(geometry.scaledW);
+      $("scaledHeight").textContent = cm(geometry.scaledH);
+      $("onePx").textContent = `${fmt(geometry.scale,6)} cm`;
+      $("hundredPx").textContent = cm(geometry.scale*100);
+      $("marginLeft").textContent = cm(geometry.marginLeft);
+      $("marginRight").textContent = cm(geometry.marginRight);
+      $("marginBottom").textContent = cm(geometry.marginBottom);
+      $("marginTop").textContent = cm(geometry.marginTop);
+
+      const x0 = geometry.marginLeft, x1 = geometry.marginLeft + geometry.scaledW, y0 = geometry.marginBottom, y1 = geometry.marginBottom + geometry.scaledH;
+      $("cornerTL").textContent = `(${fmt(x0)}, ${fmt(y1)}) cm`;
+      $("cornerTR").textContent = `(${fmt(x1)}, ${fmt(y1)}) cm`;
+      $("cornerBL").textContent = `(${fmt(x0)}, ${fmt(y0)}) cm`;
+      $("cornerBR").textContent = `(${fmt(x1)}, ${fmt(y0)}) cm`;
+
+      updatePaperPreview();
+      drawCanvas();
+      renderPointUI();
+    }
+
+    function updatePaperPreview(){
+      const paper = $("paper"), paperImage = $("paperImage");
+      const stageWidth = Math.min(360, Math.max(210, document.documentElement.clientWidth - 70));
+      const ratio = geometry.paperH / geometry.paperW;
+      let previewW = stageWidth, previewH = previewW * ratio;
+      if (previewH > 420){ previewH = 420; previewW = previewH / ratio; }
+      paper.style.width = `${previewW}px`; paper.style.height = `${previewH}px`;
+      paperImage.style.left = `${(geometry.marginLeft / geometry.paperW) * 100}%`;
+      paperImage.style.bottom = `${(geometry.marginBottom / geometry.paperH) * 100}%`;
+      paperImage.style.width = `${(geometry.scaledW / geometry.paperW) * 100}%`;
+      paperImage.style.height = `${(geometry.scaledH / geometry.paperH) * 100}%`;
+      if (objectUrl) { paperImage.style.backgroundImage = `url("${objectUrl}")`; paperImage.style.backgroundSize = "cover"; paperImage.style.backgroundPosition = "center"; }
+    }
+
+    function getCanvasCSSSize(){
+      const cssW = Math.max(280, canvasWrap.clientWidth);
+      const naturalH = cssW * (imageH / imageW);
+      const maxH = document.body.classList.contains("focus-mode") ? Math.max(420, window.innerHeight * .78) : Math.min(700, window.innerHeight * .62);
+      const cssH = Math.max(300, Math.min(naturalH, maxH));
+      return { cssW, cssH };
+    }
+    function constrainPan(cssW, cssH){
+      if (view.zoom <= 1){ view.panX = 0; view.panY = 0; return; }
+      const baseScale = Math.min(cssW / imageW, cssH / imageH);
+      const drawW = imageW * baseScale * view.zoom, drawH = imageH * baseScale * view.zoom;
+      const maxPanX = Math.max(0, (drawW - cssW) / 2), maxPanY = Math.max(0, (drawH - cssH) / 2);
+      view.panX = Math.max(-maxPanX, Math.min(maxPanX, view.panX));
+      view.panY = Math.max(-maxPanY, Math.min(maxPanY, view.panY));
+    }
+    function getViewTransform(cssW, cssH){
+      const baseScale = Math.min(cssW / imageW, cssH / imageH), scale = baseScale * view.zoom;
+      const drawW = imageW * scale, drawH = imageH * scale;
+      const originX = (cssW - drawW)/2 + view.panX, originY = (cssH - drawH)/2 + view.panY;
+      return { scale, drawW, drawH, originX, originY };
+    }
+
+    function getCrosshairSettings(){ return { angle:Number($("crosshairAngle").value), distance:Number($("crosshairDistance").value), size:Number($("crosshairSize").value) }; }
+    function updateCrosshairOutputs(){
+      const { angle, distance, size } = getCrosshairSettings();
+      $("crosshairAngleOut").textContent = `${angle}°`;
+      $("crosshairDistanceOut").textContent = `${distance} px`;
+      $("crosshairSizeOut").textContent = `${size} px`;
+      drawCrosshairPreview();
+      drawCanvas();
+    }
+
+    function drawCrosshairPreview(){
+      const c = crosshairPreviewCtx, { angle,distance,size } = getCrosshairSettings();
+      c.clearRect(0,0,100,100); c.fillStyle = "#0b0f14"; c.fillRect(0,0,100,100);
+      c.save(); c.translate(50,58); c.fillStyle = "rgba(255,255,255,.12)";
+      c.beginPath(); c.ellipse(0,10,16,24,0,0,Math.PI*2); c.fill();
+      roundRectCanvas(c,-12,-8,24,44,12); c.fill(); c.restore();
+      const rad = angle * Math.PI/180; const cx = 50 + Math.cos(rad) * distance * .26, cy = 58 - Math.sin(rad) * distance * .26;
+      c.strokeStyle = "rgba(106,168,255,.34)"; c.lineWidth = 2; c.beginPath(); c.moveTo(50,58); c.lineTo(cx,cy); c.stroke();
+      c.strokeStyle = "#8dc0ff"; c.lineWidth = 2; c.beginPath(); c.moveTo(cx-size/2, cy); c.lineTo(cx+size/2, cy); c.moveTo(cx, cy-size/2); c.lineTo(cx, cy+size/2); c.stroke();
+      c.beginPath(); c.arc(cx,cy,4,0,Math.PI*2); c.fillStyle="#6aa8ff"; c.shadowColor="rgba(106,168,255,.65)"; c.shadowBlur=10; c.fill(); c.shadowBlur=0;
+    }
+
+    function snapshot(){ return JSON.stringify({ points, activePointId, nextPointNumber, editPointId, mode }); }
+    function restoreSnapshot(data){
+      const s = JSON.parse(data); points = s.points||[]; activePointId = s.activePointId ?? null; nextPointNumber = s.nextPointNumber ?? 1; editPointId = s.editPointId ?? null;
+      if (mode === "single" && points.length > 1) points = points.slice(-1);
+      updateEditStatus(); drawCanvas(); renderPointUI();
+    }
+    function pushHistory(){ undoStack.push(snapshot()); if (undoStack.length > 80) undoStack.shift(); redoStack = []; updateUndoRedoButtons(); }
+    function updateUndoRedoButtons(){ $("undoBtn").classList.toggle("active", undoStack.length>0); $("redoBtn").classList.toggle("active", redoStack.length>0); }
+    function undo(){ if (!undoStack.length) return; redoStack.push(snapshot()); restoreSnapshot(undoStack.pop()); updateUndoRedoButtons(); }
+    function redo(){ if (!redoStack.length) return; undoStack.push(snapshot()); restoreSnapshot(redoStack.pop()); updateUndoRedoButtons(); }
+
+    function getPointColor(point){ return colorMode === "single" ? singleColor : palette[(point.colorIndex ?? 0) % palette.length]; }
+    function pointPhysicalData(point){
+      const insideX = point.x * geometry.scale, insideYFromBottom = (imageH - point.y) * geometry.scale;
+      return { insideX, insideYFromBottom, sheetX:geometry.marginLeft+insideX, sheetY:geometry.marginBottom+insideYFromBottom };
+    }
+    function formatPoint(point){ const d = pointPhysicalData(point); return `${point.label}${point.group ? ` [${point.group}]` : ""} | px: (${point.x}, ${point.y}) | cm: (${fmt(d.sheetX)}, ${fmt(d.sheetY)})${point.locked ? " | bloqueado" : ""}`; }
+    function relabelSingleIfNeeded(){ if (mode === "single" && points.length > 1) points = [points[points.length-1]]; if (mode === "single" && points[0]) { points[0].label = "P1"; points[0].colorIndex = 0; nextPointNumber = 2; } }
+    function getActivePoint(){ return points.find(p => p.id === activePointId) || null; }
+    function setActivePoint(id){ activePointId = id; quickActionsVisible = !!id; updateEditStatus(); renderPointUI(); drawCanvas(); }
+    function createNewPoint(x,y){ return { id:`p-${Date.now()}-${Math.random().toString(36).slice(2,7)}`, label:`P${mode === "single" ? 1 : nextPointNumber}`, x,y, locked:false, group:"Sin grupo", colorIndex: mode === "single" ? 0 : nextPointNumber - 1 }; }
+
+    function addOrReplacePoint(imgPoint){
+      if (!geometry) return;
+      pushHistory();
+      if (editPointId){
+        const point = points.find(p => p.id === editPointId);
+        if (point && !point.locked){ point.x = imgPoint.x; point.y = imgPoint.y; activePointId = point.id; }
+        editPointId = null;
+      } else if (mode === "single"){
+        const p = createNewPoint(imgPoint.x,imgPoint.y); points = [p]; activePointId = p.id; nextPointNumber = 2;
+      } else {
+        const p = createNewPoint(imgPoint.x,imgPoint.y); points.push(p); activePointId = p.id; nextPointNumber += 1;
+      }
+      relabelSingleIfNeeded(); quickActionsVisible = true; updateEditStatus(); drawCanvas(); renderPointUI();
+    }
+
+    function hitTestPoint(clientX, clientY){
+      if (!sourceImage) return null; const rect = canvas.getBoundingClientRect(); const t = getViewTransform(rect.width, rect.height); const x = clientX - rect.left, y = clientY - rect.top;
+      let best = null, bestDist = Infinity;
+      for (const point of points){ const p = {x:t.originX + point.x*t.scale, y:t.originY + point.y*t.scale}; const d = Math.hypot(p.x-x, p.y-y); if (d < 22 && d < bestDist){ best = point; bestDist = d; } }
+      return best;
+    }
+
+    function canvasToImageByScreen(screenX, screenY, t){
+      const ix = (screenX - t.originX)/t.scale, iy = (screenY - t.originY)/t.scale;
+      if (ix<0 || iy<0 || ix>imageW || iy>imageH) return null;
+      return { x:Math.max(0,Math.min(imageW-1,Math.round(ix))), y:Math.max(0,Math.min(imageH-1,Math.round(iy))) };
+    }
+
+    function getCrosshairScreenPoint(){
+      if (!touchAnchor) return null; const { angle,distance } = getCrosshairSettings(); const rad = angle * Math.PI / 180;
+      return { x: touchAnchor.x + Math.cos(rad)*distance, y: touchAnchor.y - Math.sin(rad)*distance };
+    }
+
+    function drawRoundRect(context, x, y, w, h, r){ const rr=Math.min(r,w/2,h/2); context.beginPath(); context.moveTo(x+rr,y); context.arcTo(x+w,y,x+w,y+h,rr); context.arcTo(x+w,y+h,x,y+h,rr); context.arcTo(x,y+h,x,y,rr); context.arcTo(x,y,x+w,y,rr); context.closePath(); }
+    function roundRectCanvas(context,x,y,w,h,r){ drawRoundRect(context,x,y,w,h,r); }
+
+    function getGridStepInImagePx(unit){
+      if (!geometry) return null;
+      if (unit === "px") return 100;
+      if (unit === "cm") return 1 / geometry.scale;
+      if (unit === "mm") return 0.5 / geometry.scale;
+      return null;
+    }
+
+    function drawGrid(t, cssW, cssH){
+      if (!gridOn || !geometry) return;
+      let unit = gridUnit;
+      if (unit === "auto") unit = rulerCm ? "cm" : rulerPx ? "px" : rulerMm ? "mm" : "cm";
+      const stepPx = getGridStepInImagePx(unit); if (!stepPx || stepPx <= 0) return;
+      const screenStep = stepPx * t.scale; if (screenStep < 12) return;
+      ctx.save(); ctx.strokeStyle = "rgba(255,255,255,.10)"; ctx.lineWidth = 1;
+      const left = Math.max(0,t.originX), right = Math.min(cssW, t.originX + t.drawW), top = Math.max(0,t.originY), bottom = Math.min(cssH, t.originY + t.drawH);
+      const startX = Math.max(0, Math.floor((-t.originX)/(stepPx*t.scale))); const endX = Math.ceil((cssW - t.originX)/(stepPx*t.scale));
+      for (let i=startX; i<=endX; i++){ const imgX = i*stepPx; const x = t.originX + imgX*t.scale + .5; ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke(); }
+      const startY = Math.max(0, Math.floor((-t.originY)/(stepPx*t.scale))); const endY = Math.ceil((cssH - t.originY)/(stepPx*t.scale));
+      for (let j=startY; j<=endY; j++){ const imgY = j*stepPx; const y = t.originY + imgY*t.scale + .5; ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke(); }
+      ctx.restore();
+    }
+
+    function drawFixedRulers(t, cssW, cssH){
+      const enabled = [];
+      if (rulerPx) enabled.push({ unit:"px", color:"rgba(255,204,102,.95)" });
+      if (rulerCm) enabled.push({ unit:"cm", color:"rgba(106,168,255,.95)" });
+      if (rulerMm) enabled.push({ unit:"mm", color:"rgba(85,211,138,.92)" });
+      if (!enabled.length || !geometry) return;
+      const topH = 24, leftW = 28;
+      ctx.save();
+      ctx.fillStyle = document.body.classList.contains("theme-light") ? "rgba(255,255,255,.88)" : "rgba(8,12,17,.82)";
+      ctx.fillRect(0,0,cssW,topH); ctx.fillRect(0,0,leftW,cssH);
+      ctx.strokeStyle = document.body.classList.contains("theme-light") ? "rgba(0,0,0,.08)" : "rgba(255,255,255,.07)";
+      ctx.beginPath(); ctx.moveTo(0,topH+.5); ctx.lineTo(cssW,topH+.5); ctx.moveTo(leftW+.5,0); ctx.lineTo(leftW+.5,cssH); ctx.stroke();
+
+      const vx0 = Math.max(0, (-t.originX) / t.scale), vx1 = Math.min(imageW, (cssW - t.originX) / t.scale);
+      const vy0 = Math.max(0, (-t.originY) / t.scale), vy1 = Math.min(imageH, (cssH - t.originY) / t.scale);
+
+      enabled.forEach((cfg, index) => {
+        const rulerIndexOffset = index * 7;
+        let stepPx = 100, majorEvery = 5, labelFn = v => String(v);
+        if (cfg.unit === "cm") { stepPx = 1 / geometry.scale; majorEvery = 2; labelFn = v => `${v}cm`; }
+        else if (cfg.unit === "mm") { stepPx = 0.1 / geometry.scale; majorEvery = 10; labelFn = v => `${v}mm`; }
+        else { stepPx = 100; majorEvery = 5; labelFn = v => `${v}`; }
+
+        const baseScreenStep = stepPx * t.scale;
+        if (baseScreenStep < 4 && cfg.unit !== "px") {
+          if (cfg.unit === "mm") { stepPx = 0.5 / geometry.scale; majorEvery = 2; labelFn = v => `${v*5}mm`; }
+          if (cfg.unit === "cm") { stepPx = 2 / geometry.scale; majorEvery = 1; labelFn = v => `${v*2}cm`; }
+        }
+        const screenStep = stepPx * t.scale; if (screenStep < 4) return;
+        ctx.strokeStyle = cfg.color; ctx.fillStyle = cfg.color; ctx.lineWidth = 1; ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
+
+        const startX = Math.max(0, Math.floor(vx0 / stepPx));
+        const endX = Math.ceil(vx1 / stepPx);
+        for (let i=startX; i<=endX; i++){
+          const imgX = i * stepPx; const sx = t.originX + imgX * t.scale;
+          const tick = i % majorEvery === 0 ? 10 : 6;
+          if (sx >= leftW && sx <= cssW) { ctx.beginPath(); ctx.moveTo(sx+.5, topH); ctx.lineTo(sx+.5, topH-tick); ctx.stroke(); if (i % majorEvery === 0) ctx.fillText(labelFn(i), sx+2, 10 + rulerIndexOffset); }
+        }
+
+        const startY = Math.max(0, Math.floor(vy0 / stepPx));
+        const endY = Math.ceil(vy1 / stepPx);
+        for (let j=startY; j<=endY; j++){
+          const imgY = j * stepPx; const sy = t.originY + imgY * t.scale;
+          const tick = j % majorEvery === 0 ? 10 : 6;
+          if (sy >= topH && sy <= cssH) { ctx.beginPath(); ctx.moveTo(leftW, sy+.5); ctx.lineTo(leftW-tick, sy+.5); ctx.stroke(); if (j % majorEvery === 0) ctx.fillText(labelFn(j), 2, sy-2); }
+        }
+      });
+      ctx.restore();
+    }
+
+    function getScreenMarker(point,t){ return { x:t.originX + point.x*t.scale, y:t.originY + point.y*t.scale }; }
+    function drawMarker(x,y,label,color,active,locked){
+      const radius = active ? 7 : 6;
+      ctx.save(); ctx.shadowColor = color; ctx.shadowBlur = active ? 16 : 10;
+      ctx.beginPath(); ctx.arc(x,y,radius+5,0,Math.PI*2); ctx.fillStyle = "rgba(0,0,0,.44)"; ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,radius,0,Math.PI*2); ctx.fillStyle = "#fff"; ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,Math.max(2,radius-3),0,Math.PI*2); ctx.fillStyle = color; ctx.fill();
+      if (locked){ ctx.shadowBlur = 0; ctx.fillStyle = "#ffe7a0"; ctx.font = "800 12px -apple-system, BlinkMacSystemFont, sans-serif"; ctx.fillText("🔒", x-6, y-12); }
+      if (showLabels){
+        ctx.shadowBlur = 0; ctx.font = "800 12px -apple-system, BlinkMacSystemFont, sans-serif"; const tw = ctx.measureText(label).width; const boxW = tw+14, boxH = 24; const bx = x+12, by = y-32;
+        ctx.fillStyle = "rgba(8,12,17,.88)"; drawRoundRect(ctx,bx,by,boxW,boxH,8); ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.stroke(); ctx.fillStyle = "#eaf3ff"; ctx.textBaseline = "middle"; ctx.fillText(label,bx+7,by+boxH/2+.5);
+      }
+      ctx.restore();
+    }
+
+    function drawInputOverlays(){
+      if (!touchAnchor) return;
+      if (inputMode === "crosshair" && crosshairAction === "aim"){
+        ctx.save(); ctx.globalAlpha = .25; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.ellipse(touchAnchor.x, touchAnchor.y+20, 18, 30, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+        const ch = getCrosshairScreenPoint(); if (!ch) return; const { size } = getCrosshairSettings();
+        ctx.save(); ctx.strokeStyle = "rgba(106,168,255,.82)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(touchAnchor.x, touchAnchor.y); ctx.lineTo(ch.x, ch.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ch.x-size, ch.y); ctx.lineTo(ch.x+size, ch.y); ctx.moveTo(ch.x, ch.y-size); ctx.lineTo(ch.x, ch.y+size); ctx.stroke();
+        ctx.beginPath(); ctx.arc(ch.x,ch.y,5,0,Math.PI*2); ctx.fillStyle="#6aa8ff"; ctx.shadowColor="rgba(106,168,255,.60)"; ctx.shadowBlur=12; ctx.fill(); ctx.restore();
+      } else if (inputMode === "finger"){
+        ctx.save(); ctx.strokeStyle = "rgba(255,255,255,.8)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(touchAnchor.x,touchAnchor.y,10,0,Math.PI*2); ctx.stroke(); ctx.restore();
+      }
+    }
+
+    function updateLoupe(){
+      if (!showLoupe || !loupeImagePoint){ $("loupe").classList.add("hidden"); return; }
+      $("loupe").classList.remove("hidden"); const size = 120, zoomFactor = 6, srcW = size/zoomFactor, srcH = size/zoomFactor;
+      loupeCtx.clearRect(0,0,size,size); loupeCtx.imageSmoothingEnabled = false;
+      loupeCtx.drawImage(sourceImage, loupeImagePoint.x-srcW/2, loupeImagePoint.y-srcH/2, srcW, srcH, 0,0,size,size);
+      loupeCtx.strokeStyle = "rgba(255,255,255,.28)"; loupeCtx.lineWidth = 1;
+      for (let i=0;i<=12;i++){ const p=i*10; loupeCtx.beginPath(); loupeCtx.moveTo(p,0); loupeCtx.lineTo(p,size); loupeCtx.stroke(); loupeCtx.beginPath(); loupeCtx.moveTo(0,p); loupeCtx.lineTo(size,p); loupeCtx.stroke(); }
+      loupeCtx.strokeStyle = "#8dc0ff"; loupeCtx.lineWidth = 2; loupeCtx.beginPath(); loupeCtx.moveTo(size/2,0); loupeCtx.lineTo(size/2,size); loupeCtx.moveTo(0,size/2); loupeCtx.lineTo(size,size/2); loupeCtx.stroke();
+      loupeCtx.fillStyle = "rgba(8,12,17,.7)"; loupeCtx.fillRect(0,size-20,size,20); loupeCtx.fillStyle="#fff"; loupeCtx.font="11px -apple-system, BlinkMacSystemFont, sans-serif"; loupeCtx.fillText(`X ${loupeImagePoint.x} · Y ${loupeImagePoint.y}`, 8, size-7);
+    }
+
+    function drawMinimap(t,cssW,cssH){
+      $("minimap").classList.toggle("hidden", false);
+      minimapCtx.clearRect(0,0,116,116); minimapCtx.fillStyle = document.body.classList.contains("theme-light") ? "#ffffff" : "#0b1016"; minimapCtx.fillRect(0,0,116,116);
+      const pad=8, fit = Math.min((116-pad*2)/imageW, (116-pad*2)/imageH), iw = imageW*fit, ih = imageH*fit, ox = (116-iw)/2, oy=(116-ih)/2;
+      minimapCtx.drawImage(sourceImage, ox,oy,iw,ih); minimapCtx.strokeStyle = document.body.classList.contains("theme-light") ? "rgba(0,0,0,.10)" : "rgba(255,255,255,.12)"; minimapCtx.strokeRect(ox+.5,oy+.5,iw-1,ih-1);
+      for (const point of points){ const px=ox+point.x*fit, py=oy+point.y*fit; minimapCtx.beginPath(); minimapCtx.arc(px,py, point.id===activePointId?3:2,0,Math.PI*2); minimapCtx.fillStyle = getPointColor(point); minimapCtx.fill(); }
+      const vx0 = Math.max(0, -t.originX / t.scale), vy0 = Math.max(0, -t.originY / t.scale), vx1 = Math.min(imageW, (cssW - t.originX)/t.scale), vy1 = Math.min(imageH, (cssH - t.originY)/t.scale);
+      minimapCtx.strokeStyle = "#8dc0ff"; minimapCtx.lineWidth = 1.5; minimapCtx.strokeRect(ox+vx0*fit, oy+vy0*fit, Math.max(4,(vx1-vx0)*fit), Math.max(4,(vy1-vy0)*fit));
+    }
+
+    function updateQuickActions(t){
+      const qa = $("quickActions"), active = getActivePoint();
+      if (!active || !quickActionsVisible){ qa.classList.add("hidden"); qa.innerHTML = ""; return; }
+      const screen = getScreenMarker(active,t); qa.classList.remove("hidden"); qa.style.left = `${screen.x}px`; qa.style.top = `${screen.y-8}px`;
+      qa.innerHTML = active.locked ? `<button class="good" type="button" data-qa="unlock">🔓</button>` : `<button class="warn" type="button" data-qa="lock">🔒</button><button class="danger" type="button" data-qa="delete">✕</button>`;
+    }
+
+    function drawCanvas(){
+      if (!sourceImage) return;
+      const { cssW, cssH } = getCanvasCSSSize(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      constrainPan(cssW, cssH);
+      canvas.style.width = `${cssW}px`; canvas.style.height = `${cssH}px`; canvas.width = Math.round(cssW*dpr); canvas.height = Math.round(cssH*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+      ctx.fillStyle = "#05070a"; ctx.fillRect(0,0,cssW,cssH);
+      const t = getViewTransform(cssW,cssH);
+      ctx.drawImage(sourceImage, t.originX, t.originY, t.drawW, t.drawH);
+      ctx.strokeStyle = "rgba(106,168,255,.38)"; ctx.lineWidth = 1; ctx.strokeRect(t.originX+.5,t.originY+.5,t.drawW-1,t.drawH-1);
+      drawGrid(t,cssW,cssH);
+      for (const point of points){ const p = getScreenMarker(point,t); if (p.x<-80 || p.y<-80 || p.x>cssW+80 || p.y>cssH+80) continue; drawMarker(p.x,p.y,point.label,getPointColor(point),point.id===activePointId,point.locked); }
+      drawInputOverlays();
+      drawFixedRulers(t,cssW,cssH);
+      updateLoupe();
+      drawMinimap(t,cssW,cssH);
+      updateQuickActions(t);
+      updateZoomUI();
+    }
+
+    function renderPointUI(){
+      const active = getActivePoint(); const pointsList = $("pointsList"); const clearAllBtn = $("clearAll");
+      if (!active || !geometry){ $("pointEmpty").classList.remove("hidden"); $("pointData").classList.add("hidden"); }
+      else {
+        $("pointEmpty").classList.add("hidden"); $("pointData").classList.remove("hidden");
+        const d = pointPhysicalData(active);
+        $("selectedLabel").textContent = `${active.label} seleccionado${active.locked ? " · bloqueado" : ""}`;
+        $("pixelPoint").textContent = `X ${active.x} px · Y ${active.y} px`;
+        $("cmPoint").textContent = `X ${fmt(d.sheetX)} cm · Y ${fmt(d.sheetY)} cm`;
+        $("insidePoint").textContent = `X ${fmt(d.insideX)} cm · Y ${fmt(d.insideYFromBottom)} cm`;
+        $("activeScale").textContent = `1 px = ${fmt(geometry.scale,6)} cm`;
+        $("groupInput").value = active.group || "";
+      }
+      clearAllBtn.classList.toggle("hidden", mode !== "multi" || points.length === 0);
+      if (!points.length){ pointsList.classList.add("hidden"); pointsList.innerHTML=""; return; }
+      pointsList.classList.remove("hidden");
+      const groups = new Map();
+      points.forEach(point => { const g = point.group && point.group.trim() ? point.group.trim() : "Sin grupo"; if (!groups.has(g)) groups.set(g,[]); groups.get(g).push(point); });
+      pointsList.innerHTML = "";
+      groups.forEach((groupPoints, groupName) => {
+        const section = document.createElement("section"); section.className = "group-section";
+        const header = document.createElement("div"); header.className = "group-head"; header.innerHTML = `<strong>${escapeHtml(groupName)}</strong><span>${groupPoints.length} punto${groupPoints.length===1?"":"s"}</span>`; section.appendChild(header);
+        groupPoints.forEach(point => {
+          const d = pointPhysicalData(point); const row = document.createElement("div"); row.className = "point-list-item";
+          row.innerHTML = `<button class="point-token" type="button" style="background:${getPointColor(point)}22;border-color:${getPointColor(point)}88" data-select="${point.id}">${point.label}</button><div class="point-summary"><strong>px (${point.x}, ${point.y})</strong><span>cm (${fmt(d.sheetX)}, ${fmt(d.sheetY)})${point.locked ? " · 🔒 bloqueado" : ""}</span></div><div class="row-actions"><button type="button" data-edit="${point.id}">✎</button><button type="button" data-lock="${point.id}">${point.locked ? "🔓" : "🔒"}</button><button type="button" data-copy="${point.id}">📋</button><button type="button" data-delete="${point.id}">✕</button></div>`;
+          section.appendChild(row);
+        });
+        pointsList.appendChild(section);
+      });
+    }
+
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function switchMode(newMode){
+      if (newMode === mode) return; mode = newMode; $("singleMode").classList.toggle("active", mode==="single"); $("multiMode").classList.toggle("active", mode==="multi");
+      if (mode === "single"){
+        pushHistory(); const keep = getActivePoint() || points[points.length-1]; points = keep ? [{ ...keep, label:"P1", colorIndex:0 }] : []; activePointId = keep ? points[0].id : null; nextPointNumber = points.length ? 2 : 1;
+      } else { points = points.map((p,i)=>({ ...p, label:`P${i+1}`, colorIndex:i })); nextPointNumber = points.length + 1; }
+      updateModeHelp(); drawCanvas(); renderPointUI();
+    }
+    function switchInputMode(newMode){ if (newMode===inputMode) return; inputMode=newMode; $("fingerMode").classList.toggle("active",inputMode==="finger"); $("crosshairMode").classList.toggle("active",inputMode==="crosshair"); $("crosshairPanel").classList.toggle("hidden",inputMode!=="crosshair"); updateModeHelp(); drawCanvas(); }
+    function setCrosshairAction(action){ crosshairAction = action; $("crosshairAim").classList.toggle("active", action==="aim"); $("crosshairPan").classList.toggle("active", action==="pan"); updateModeHelp(); drawCanvas(); }
+    function updateModeHelp(){
+      const parts=[]; parts.push(`Modo ${inputMode === "finger" ? "Dedo" : "Crosshair"} · ${mode === "single" ? "1 punto" : "Múltiples"}.`);
+      if (inputMode === "finger") parts.push("Toque = colocar o seleccionar. Si el zoom es mayor a 1×, arrastra la imagen con un dedo.");
+      else if (crosshairAction === "aim") parts.push("Crosshair en modo Apuntar: mantén y mueve tu dedo para usarlo como referencia; la mira desplazada se coloca al soltar.");
+      else parts.push("Crosshair en modo Mover imagen: con zoom puedes arrastrar la fotografía con un dedo y luego regresar a Apuntar.");
+      if (editPointId) parts.push("Estás en modo edición: el siguiente toque moverá el punto seleccionado.");
+      $("modeHelp").textContent = parts.join(" ");
+    }
+    function updateEditStatus(){ $("editStatus").classList.toggle("hidden", !editPointId); const ap = getActivePoint(); $("editStatus").textContent = editPointId ? `✏️ Editando ${ap?.label || "punto"}` : "✏️ Editando punto"; updateModeHelp(); }
+
+    function setZoom(newZoom, anchorClientX=null, anchorClientY=null){
+      if (!sourceImage) return; const rect = canvas.getBoundingClientRect(); const oldZoom = view.zoom; newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom)); if (Math.abs(newZoom-oldZoom)<.0001) return;
+      let anchorX = rect.width/2, anchorY = rect.height/2; if (anchorClientX!==null && anchorClientY!==null){ anchorX = anchorClientX - rect.left; anchorY = anchorClientY - rect.top; }
+      const oldT = getViewTransform(rect.width, rect.height); const imgX = (anchorX - oldT.originX) / oldT.scale, imgY = (anchorY - oldT.originY) / oldT.scale;
+      view.zoom = newZoom; const baseScale = Math.min(rect.width/imageW, rect.height/imageH), newScale = baseScale * view.zoom; const newDrawW=imageW*newScale, newDrawH=imageH*newScale, centeredOriginX=(rect.width-newDrawW)/2, centeredOriginY=(rect.height-newDrawH)/2;
+      view.panX = anchorX - imgX*newScale - centeredOriginX; view.panY = anchorY - imgY*newScale - centeredOriginY; drawCanvas();
+    }
+    function resetView(){ view.zoom = 1; view.panX = 0; view.panY = 0; drawCanvas(); }
+    function updateZoomUI(){ $("zoomReadout").textContent = `${view.zoom.toFixed(2)}×`; $("canvasBadge").textContent = `${inputMode === "crosshair" ? "Crosshair" : "Dedo"} · ${mode === "single" ? "1 punto" : `${points.length} puntos`} · ${view.zoom.toFixed(2)}×`; }
+
+    function lockUnlockPoint(id){ const p = points.find(x=>x.id===id); if(!p) return; pushHistory(); p.locked = !p.locked; if (p.locked && editPointId===p.id) editPointId=null; updateEditStatus(); drawCanvas(); renderPointUI(); }
+    function deletePoint(id){ const p=points.find(x=>x.id===id); if(!p) return; if (p.locked){ alert("Primero desbloquea este punto para poder borrarlo."); return; } pushHistory(); points = points.filter(x=>x.id!==id); if (activePointId===id) activePointId = points.length ? points[points.length-1].id : null; if (editPointId===id) editPointId = null; if (mode==="single" && points[0]) points[0].label="P1"; updateEditStatus(); drawCanvas(); renderPointUI(); }
+    function clearAllPoints(){ if(!points.length) return; pushHistory(); points=[]; activePointId=null; nextPointNumber=1; editPointId=null; quickActionsVisible=false; updateEditStatus(); drawCanvas(); renderPointUI(); }
+    function lockAll(){ if(!points.length) return; pushHistory(); points.forEach(p=>p.locked=true); editPointId=null; updateEditStatus(); drawCanvas(); renderPointUI(); }
+    function unlockAll(){ if(!points.length) return; pushHistory(); points.forEach(p=>p.locked=false); drawCanvas(); renderPointUI(); }
+    function startEditingPoint(id){ const p=points.find(x=>x.id===id); if(!p) return; if (p.locked){ alert("Desbloquéalo primero para poder editarlo."); return; } setActivePoint(id); editPointId=id; updateEditStatus(); }
+    function updateCurrentGroup(){ const p=getActivePoint(); if(!p) return; p.group = $("groupInput").value.trim() || "Sin grupo"; renderPointUI(); }
+    function copyPoint(id){ const p=points.find(x=>x.id===id); if(p) copyText(formatPoint(p)); }
+    function copyAllPoints(){ if(!points.length) return; copyText(points.map(formatPoint).join("\n")); }
+
+    function drawExportImage(){
+      if (!sourceImage || !points.length || !geometry) return;
+      const outW = Math.min(1800, imageW), scale = outW / imageW, tableRowH = 34, tableHeaderH = 50, padding = 20, totalRows = points.length + 1;
+      const tableH = tableHeaderH + totalRows * tableRowH + padding, outH = Math.round(imageH * scale + tableH);
+      const exp = document.createElement("canvas"); exp.width = outW; exp.height = outH; const ex = exp.getContext("2d");
+      ex.fillStyle = document.body.classList.contains("theme-light") ? "#f6f9fd" : "#0b0d10"; ex.fillRect(0,0,outW,outH);
+      ex.drawImage(sourceImage,0,0,outW,Math.round(imageH*scale));
+      points.forEach(point => {
+        const x=point.x*scale, y=point.y*scale, color=getPointColor(point);
+        ex.beginPath(); ex.arc(x,y,9,0,Math.PI*2); ex.fillStyle="rgba(0,0,0,.45)"; ex.fill();
+        ex.beginPath(); ex.arc(x,y,6,0,Math.PI*2); ex.fillStyle="#fff"; ex.fill();
+        ex.beginPath(); ex.arc(x,y,3.5,0,Math.PI*2); ex.fillStyle=color; ex.fill();
+        ex.font="bold 20px -apple-system, sans-serif"; const label=point.label, w=ex.measureText(label).width+18, h=30, bx=x+12, by=y-36;
+        ex.fillStyle="rgba(8,12,17,.88)"; drawRoundRect(ex,bx,by,w,h,10); ex.fill(); ex.strokeStyle=color; ex.lineWidth=1; ex.stroke(); ex.fillStyle="#fff"; ex.textBaseline="middle"; ex.fillText(label,bx+9,by+h/2+1);
+        if (point.locked) ex.fillText("🔒", x-8, y-14);
+      });
+      const tableY = Math.round(imageH*scale);
+      ex.fillStyle = document.body.classList.contains("theme-light") ? "#ffffff" : "#101419"; ex.fillRect(0,tableY,outW,outH-tableY);
+      ex.fillStyle = document.body.classList.contains("theme-light") ? "#16212e" : "#fff"; ex.font = "bold 22px -apple-system, sans-serif"; ex.fillText("Puntos exportados",20,tableY+30);
+      ex.font="bold 16px -apple-system, sans-serif"; ex.fillStyle = document.body.classList.contains("theme-light") ? "#376cff" : "#9fc3ff"; const headers=["Punto","Grupo","Px","Cm"], cols=[20,120,330,620]; headers.forEach((h,i)=>ex.fillText(h,cols[i],tableY+60));
+      ex.strokeStyle = "rgba(0,0,0,.08)"; if (!document.body.classList.contains("theme-light")) ex.strokeStyle = "rgba(255,255,255,.12)"; ex.beginPath(); ex.moveTo(20,tableY+68); ex.lineTo(outW-20,tableY+68); ex.stroke();
+      ex.font="14px -apple-system, sans-serif";
+      points.forEach((point,i) => { const y = tableY + 95 + i*tableRowH; const d = pointPhysicalData(point); ex.fillStyle = getPointColor(point); ex.fillText(point.label, cols[0], y); ex.fillStyle = document.body.classList.contains("theme-light") ? "#26384f" : "#d7dce4"; ex.fillText(point.group || "Sin grupo", cols[1], y); ex.fillText(`(${point.x}, ${point.y})`, cols[2], y); ex.fillText(`(${fmt(d.sheetX)}, ${fmt(d.sheetY)})`, cols[3], y); });
+      const url = exp.toDataURL("image/png"); const a = document.createElement("a"); a.href = url; a.download = "pixel-paper-mapper-export.png"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    function toggleFocusMode(force=null){ const on = force !== null ? force : !document.body.classList.contains("focus-mode"); document.body.classList.toggle("focus-mode", on); $("toggleFocus").textContent = on ? "Selector activo" : "Pantalla completa"; setTimeout(drawCanvas, 60); }
+    function togglePanel(contentId, button){ const el=$(contentId); const hidden = !el.classList.contains("hidden"); el.classList.toggle("hidden", hidden); button.classList.toggle("active", !hidden); button.textContent = hidden ? "▸" : "▾"; setTimeout(()=>{ if (sourceImage) drawCanvas(); }, 30); }
+
+    function pointerDown(e){
+      if (!sourceImage) return; e.preventDefault(); canvas.setPointerCapture?.(e.pointerId); pointers.set(e.pointerId,{x:e.clientX,y:e.clientY}); moved=false; dragging=false;
+      const rect = canvas.getBoundingClientRect(); touchAnchor = { x:e.clientX-rect.left, y:e.clientY-rect.top };
+      if (pointers.size === 1){
+        gestureStart = { x:e.clientX, y:e.clientY, panX:view.panX, panY:view.panY };
+        const t = getViewTransform(rect.width, rect.height);
+        if (inputMode === "finger") loupeImagePoint = canvasToImageByScreen(touchAnchor.x,touchAnchor.y,t);
+        else if (crosshairAction === "aim") { const ch = getCrosshairScreenPoint(); loupeImagePoint = ch ? canvasToImageByScreen(ch.x,ch.y,t) : null; }
+        else loupeImagePoint = null;
+        showLoupe = (inputMode === "finger") || (inputMode === "crosshair" && crosshairAction === "aim");
+      } else if (pointers.size === 2){
+        const arr=[...pointers.values()]; const dx=arr[1].x-arr[0].x, dy=arr[1].y-arr[0].y;
+        pinchStart = { distance:Math.hypot(dx,dy), zoom:view.zoom, centerX:(arr[0].x+arr[1].x)/2, centerY:(arr[0].y+arr[1].y)/2, panX:view.panX, panY:view.panY };
+        showLoupe = false;
+      }
+      drawCanvas();
+    }
+
+    function pointerMove(e){
+      if (!pointers.has(e.pointerId)) return; e.preventDefault(); pointers.set(e.pointerId,{x:e.clientX,y:e.clientY}); const rect = canvas.getBoundingClientRect();
+      if (pointers.size === 2){
+        const arr=[...pointers.values()]; const dx=arr[1].x-arr[0].x, dy=arr[1].y-arr[0].y, distance=Math.hypot(dx,dy), centerX=(arr[0].x+arr[1].x)/2, centerY=(arr[0].y+arr[1].y)/2;
+        if (!pinchStart) pinchStart = { distance, zoom:view.zoom, centerX, centerY, panX:view.panX, panY:view.panY };
+        if (pinchStart.distance > 0){
+          const newZoom = pinchStart.zoom * (distance / pinchStart.distance); setZoom(newZoom, centerX, centerY);
+          const centerDx = centerX - pinchStart.centerX, centerDy = centerY - pinchStart.centerY; view.panX += centerDx; view.panY += centerDy; pinchStart.centerX = centerX; pinchStart.centerY = centerY;
+        }
+        moved = true; drawCanvas(); return;
+      }
+      touchAnchor = { x:e.clientX-rect.left, y:e.clientY-rect.top };
+      const dx = e.clientX - gestureStart.x, dy = e.clientY - gestureStart.y, distance = Math.hypot(dx,dy);
+      const shouldPan = (inputMode === "finger" && view.zoom > 1) || (inputMode === "crosshair" && crosshairAction === "pan" && view.zoom > 1);
+      if (shouldPan && distance > 6){ dragging = true; moved = true; view.panX = gestureStart.panX + dx; view.panY = gestureStart.panY + dy; }
+      else if (inputMode === "crosshair" && crosshairAction === "aim" && distance > 2){ moved = true; }
+      const t = getViewTransform(rect.width, rect.height);
+      if (inputMode === "finger") loupeImagePoint = canvasToImageByScreen(touchAnchor.x,touchAnchor.y,t);
+      else if (crosshairAction === "aim"){ const ch = getCrosshairScreenPoint(); loupeImagePoint = ch ? canvasToImageByScreen(ch.x,ch.y,t) : null; }
+      showLoupe = (inputMode === "finger") || (inputMode === "crosshair" && crosshairAction === "aim");
+      drawCanvas();
+    }
+
+    function pointerUp(e){
+      if (!pointers.has(e.pointerId)) return; e.preventDefault(); const rect = canvas.getBoundingClientRect(); const t = getViewTransform(rect.width, rect.height);
+      const clientX=e.clientX, clientY=e.clientY, canvasX=clientX-rect.left, canvasY=clientY-rect.top; const hadOnePointer = pointers.size===1; pointers.delete(e.pointerId);
+      if (hadOnePointer){
+        let targetPoint = null;
+        if (inputMode === "crosshair" && crosshairAction === "aim"){
+          const ch = getCrosshairScreenPoint();
+          if (ch){ const hit = hitTestPoint(rect.left+ch.x, rect.top+ch.y); if (!dragging && hit) { setActivePoint(hit.id); } else targetPoint = canvasToImageByScreen(ch.x, ch.y, t); }
+        } else if (inputMode === "finger"){
+          const hit = hitTestPoint(clientX, clientY);
+          if (!dragging && hit) setActivePoint(hit.id); else if (!dragging) targetPoint = canvasToImageByScreen(canvasX, canvasY, t);
+        }
+        if (targetPoint && !dragging) addOrReplacePoint(targetPoint);
+        showLoupe=false; loupeImagePoint=null; touchAnchor=null; pinchStart=null; gestureStart=null; moved=false; dragging=false; drawCanvas();
+      }
+      if (!pointers.size){ touchAnchor=null; showLoupe=false; loupeImagePoint=null; gestureStart=null; pinchStart=null; moved=false; dragging=false; drawCanvas(); }
+    }
+    function pointerCancel(e){ pointers.delete(e.pointerId); if (!pointers.size){ showLoupe=false; loupeImagePoint=null; touchAnchor=null; gestureStart=null; pinchStart=null; moved=false; dragging=false; drawCanvas(); } }
+
+    $("imageInput").addEventListener("change", () => {
+      const file = $("imageInput").files?.[0]; if (!file) return;
+      if (objectUrl) URL.revokeObjectURL(objectUrl); objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        sourceImage = img; imageW = img.naturalWidth; imageH = img.naturalHeight; points=[]; activePointId=null; nextPointNumber=1; editPointId=null; view={zoom:1,panX:0,panY:0}; undoStack=[]; redoStack=[]; updateUndoRedoButtons();
+        $("imageDimensions").textContent = `${imageW.toLocaleString("es-MX")} × ${imageH.toLocaleString("es-MX")} px`; $("imageInfo").classList.remove("hidden"); updateAll();
+        setTimeout(() => $("resultsPanel").scrollIntoView({behavior:"smooth", block:"start"}), 120);
+      };
+      img.onerror = () => showWarning("No pude abrir esa imagen. Prueba con JPG o PNG si el formato no es compatible."); img.src = objectUrl;
+    });
+
+    [$("paperWidth"), $("paperHeight")].forEach(input => { input.addEventListener("input", () => { $("paperPreset").value = "custom"; updateAll(); }); input.addEventListener("blur", updateAll); });
+    $("fitPercent").addEventListener("input", updateAll); $("paperPreset").addEventListener("change", () => { applyPreset($("paperPreset").value); updateAll(); }); $("alignX").addEventListener("change", updateAll); $("alignY").addEventListener("change", updateAll);
+    $("orientationPortrait").addEventListener("click", () => setOrientation("portrait")); $("orientationLandscape").addEventListener("click", () => setOrientation("landscape"));
+    $("singleMode").addEventListener("click", () => switchMode("single")); $("multiMode").addEventListener("click", () => switchMode("multi")); $("fingerMode").addEventListener("click", () => switchInputMode("finger")); $("crosshairMode").addEventListener("click", () => switchInputMode("crosshair"));
+    $("crosshairAim").addEventListener("click", () => setCrosshairAction("aim")); $("crosshairPan").addEventListener("click", () => setCrosshairAction("pan"));
+
+    $("toggleLabels").addEventListener("click", e => { showLabels=!showLabels; e.currentTarget.classList.toggle("active",showLabels); drawCanvas(); });
+    $("toggleGrid").addEventListener("click", e => { gridOn=!gridOn; e.currentTarget.classList.toggle("active",gridOn); drawCanvas(); });
+    $("togglePxRuler").addEventListener("click", e => { rulerPx=!rulerPx; e.currentTarget.classList.toggle("active",rulerPx); drawCanvas(); });
+    $("toggleCmRuler").addEventListener("click", e => { rulerCm=!rulerCm; e.currentTarget.classList.toggle("active",rulerCm); drawCanvas(); });
+    $("toggleMmRuler").addEventListener("click", e => { rulerMm=!rulerMm; e.currentTarget.classList.toggle("active",rulerMm); drawCanvas(); });
+    $("gridUnit").addEventListener("change", e => { gridUnit=e.target.value; drawCanvas(); });
+    $("colorMode").addEventListener("change", e => { colorMode=e.target.value; drawCanvas(); renderPointUI(); }); $("singleColor").addEventListener("input", e => { singleColor=e.target.value; drawCanvas(); renderPointUI(); });
+    ["crosshairAngle","crosshairDistance","crosshairSize"].forEach(id => $(id).addEventListener("input", updateCrosshairOutputs));
+
+    $("zoomIn").addEventListener("click", () => setZoom(view.zoom*1.35)); $("zoomOut").addEventListener("click", () => setZoom(view.zoom/1.35)); $("resetView").addEventListener("click", resetView); $("undoBtn").addEventListener("click", undo); $("redoBtn").addEventListener("click", redo);
+    $("exportMarked").addEventListener("click", drawExportImage); $("copyAllBtn").addEventListener("click", copyAllPoints); $("copyAllBtn2").addEventListener("click", copyAllPoints);
+    $("clearCurrent").addEventListener("click", () => { const a=getActivePoint(); if (a) deletePoint(a.id); }); $("clearAll").addEventListener("click", clearAllPoints); $("clearAllBtn").addEventListener("click", clearAllPoints); $("lockAllBtn").addEventListener("click", lockAll); $("unlockAllBtn").addEventListener("click", unlockAll);
+    $("copyCurrent").addEventListener("click", () => { const a=getActivePoint(); if (a) copyPoint(a.id); }); $("editCurrent").addEventListener("click", () => { const a=getActivePoint(); if (a) startEditingPoint(a.id); }); $("toggleCurrentLock").addEventListener("click", () => { const a=getActivePoint(); if (a) lockUnlockPoint(a.id); }); $("groupInput").addEventListener("input", updateCurrentGroup);
+    $("toggleFocus").addEventListener("click", () => toggleFocusMode(true)); $("exitFocus").addEventListener("click", () => toggleFocusMode(false));
+    $("quickActions").addEventListener("click", e => { const action=e.target.closest("[data-qa]")?.dataset.qa; const a=getActivePoint(); if (!a || !action) return; if (action==="lock" || action==="unlock") lockUnlockPoint(a.id); if (action==="delete") deletePoint(a.id); });
+    $("pointsList").addEventListener("click", e => { const el=e.target.closest("button"); if (!el) return; const { select,edit,lock,copy,delete:del } = el.dataset; if (select) setActivePoint(select); if (edit) startEditingPoint(edit); if (lock) lockUnlockPoint(lock); if (copy) copyPoint(copy); if (del) deletePoint(del); });
+
+    canvas.addEventListener("pointerdown", pointerDown, { passive:false }); canvas.addEventListener("pointermove", pointerMove, { passive:false }); canvas.addEventListener("pointerup", pointerUp, { passive:false }); canvas.addEventListener("pointercancel", pointerCancel, { passive:false });
+    document.addEventListener("gesturestart", e => e.preventDefault(), { passive:false }); document.addEventListener("gesturechange", e => e.preventDefault(), { passive:false }); document.addEventListener("gestureend", e => e.preventDefault(), { passive:false });
+    window.addEventListener("resize", () => setTimeout(() => { if (sourceImage) { updatePaperPreview(); drawCanvas(); } }, 80));
+    document.querySelectorAll("[data-toggle]").forEach(btn => btn.addEventListener("click", () => togglePanel(btn.dataset.toggle, btn)));
+    $("themeDark").addEventListener("click", () => setTheme("dark")); $("themeLight").addEventListener("click", () => setTheme("light"));
+
+    applyPreset("pref"); updateOrientationButtons(); updateCrosshairOutputs(); updateModeHelp(); updateUndoRedoButtons(); setCrosshairAction("aim"); $("crosshairPanel").classList.add("hidden"); setTheme(theme);
+  })();
+  </script>
+</body>
+</html>
