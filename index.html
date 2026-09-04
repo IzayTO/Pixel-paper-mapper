@@ -224,6 +224,12 @@
       .panel-content{padding:16px}
     }
   </style>
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pixel Paper Mapper" />
 </head>
 <body>
   <main class="app">
@@ -1132,6 +1138,14 @@
 
     applyPreset("pref"); updateOrientationButtons(); updateCrosshairOutputs(); updateModeHelp(); updateUndoRedoButtons(); setCrosshairAction("aim"); $("crosshairPanel").classList.add("hidden"); setTheme(theme);
   })();
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(console.error);
+      });
+    }
   </script>
 </body>
 </html>
