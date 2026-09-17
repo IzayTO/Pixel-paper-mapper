@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pixel-paper-mapper-v5-geometry-1';
+const CACHE_NAME = 'pixel-paper-mapper-v6-sketch3d-1';
 const APP_SHELL = [
   './',
   './index.html',

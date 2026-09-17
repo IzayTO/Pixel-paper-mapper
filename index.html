@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0b0d10" />
-  <title>Pixel Paper Mapper V5</title>
+  <title>Pixel Paper Mapper V6</title>
   <style>
     :root{
       --bg:#0b0d10;
@@ -340,6 +340,43 @@
       .geo-stage{min-height:390px}
     }
 
+
+    /* ===== V6 · compact navigation + sketch-to-3D ===== */
+    .view-hidden{display:none !important}
+    .app{padding-top:calc(74px + env(safe-area-inset-top))}
+    .app-topbar{
+      position:fixed;z-index:80;left:0;right:0;top:0;height:calc(62px + env(safe-area-inset-top));
+      padding:env(safe-area-inset-top) max(14px,env(safe-area-inset-right)) 0 max(14px,env(safe-area-inset-left));
+      display:grid;grid-template-columns:46px minmax(0,1fr) 46px;align-items:center;gap:10px;
+      background:linear-gradient(180deg,rgba(6,10,16,.84),rgba(6,10,16,.58));
+      border-bottom:1px solid rgba(255,255,255,.075);
+      -webkit-backdrop-filter:blur(28px) saturate(150%);backdrop-filter:blur(28px) saturate(150%);
+    }
+    body.theme-light .app-topbar{background:linear-gradient(180deg,rgba(247,251,255,.88),rgba(238,245,252,.70));border-color:rgba(18,42,70,.08)}
+    .topbar-btn{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),var(--panel-soft);color:var(--text);font-size:21px;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+    .topbar-title{min-width:0;text-align:center}
+    .topbar-title strong{display:block;font-size:15px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topbar-title span{display:block;margin-top:2px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .drawer-backdrop{position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.38);opacity:0;pointer-events:none;transition:opacity .22s ease;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+    .side-drawer{position:fixed;z-index:99;left:0;top:0;bottom:0;width:min(82vw,330px);padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));transform:translateX(-105%);transition:transform .26s cubic-bezier(.22,.8,.2,1);background:linear-gradient(155deg,rgba(19,28,42,.94),rgba(7,12,19,.94));border-right:1px solid rgba(255,255,255,.11);box-shadow:26px 0 60px rgba(0,0,0,.34);-webkit-backdrop-filter:blur(34px) saturate(150%);backdrop-filter:blur(34px) saturate(150%);display:flex;flex-direction:column}
+    body.theme-light .side-drawer{background:linear-gradient(155deg,rgba(252,254,255,.96),rgba(233,241,250,.94));border-color:rgba(20,55,90,.10)}
+    body.drawer-open .side-drawer{transform:translateX(0)}body.drawer-open .drawer-backdrop{opacity:1;pointer-events:auto}body.drawer-open{overflow:hidden}
+    .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 4px 14px}
+    .drawer-head strong{font-size:18px;letter-spacing:-.02em}.drawer-head span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+    .drawer-nav{display:grid;gap:6px}.drawer-nav button{width:100%;min-height:48px;padding:0 13px;border:1px solid transparent;border-radius:14px;background:transparent;color:var(--muted);text-align:left;display:flex;align-items:center;gap:11px;font-weight:750}.drawer-nav button span:first-child{width:26px;text-align:center;font-size:17px}.drawer-nav button.active{color:var(--text);border-color:var(--accent-line);background:linear-gradient(145deg,var(--accent-soft),rgba(255,255,255,.025));box-shadow:0 0 20px rgba(77,145,255,.09)}
+    .drawer-foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}.drawer-theme{display:grid;grid-template-columns:1fr 1fr;gap:7px}.drawer-note{margin:10px 3px 0;font-size:10px;line-height:1.4;color:var(--muted)}
+    .page-heading{margin:0 0 12px;padding:2px 4px}.page-heading .kicker{margin-bottom:5px}.page-heading h1{font-size:27px;margin-bottom:6px}.page-heading p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+    .toast{position:fixed;z-index:120;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,18px);opacity:0;pointer-events:none;max-width:min(88vw,430px);padding:10px 13px;border-radius:14px;background:rgba(12,18,27,.88);border:1px solid rgba(255,255,255,.12);color:#eef6ff;font-size:12px;box-shadow:0 10px 30px rgba(0,0,0,.28);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);transition:.2s ease}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .sketch-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
+    .sketch-preview-host{min-height:360px}.sketch-preview-host .geo-stage{min-height:360px}.sketch-preview-host #geoCanvas{height:360px}
+    .sketch-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+    .interpret-status{margin-top:10px;padding:10px 12px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.025);font-size:11px;line-height:1.45;color:var(--muted)}
+    .interpret-status strong{color:var(--text)}
+    .detected-list{display:grid;gap:6px;margin-top:8px}.detected-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 9px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);font-size:11px}.detected-row span:last-child{color:var(--accent-2);font-variant-numeric:tabular-nums}
+    .sketch-hint{padding:10px 12px;border-radius:13px;border:1px solid rgba(106,168,255,.18);background:rgba(106,168,255,.06);font-size:11px;color:var(--muted);line-height:1.45;margin-bottom:10px}
+    .auto-switch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.02)}.auto-switch span{font-size:11px;color:var(--muted)}
+    @media(max-width:760px){.sketch-layout{grid-template-columns:1fr}.app{padding-left:12px;padding-right:12px}.page-heading h1{font-size:25px}.sketch-preview-host{min-height:330px}.sketch-preview-host .geo-stage{min-height:330px}.sketch-preview-host #geoCanvas{height:330px}}
+
   </style>
 
   <link rel="manifest" href="./manifest.webmanifest" />
@@ -349,26 +386,34 @@
   <meta name="apple-mobile-web-app-title" content="Pixel Paper Mapper" />
 </head>
 <body>
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="sideDrawer" class="side-drawer" aria-label="Navegación">
+    <div class="drawer-head"><div><strong>Pixel Paper Mapper</strong><span>Pixel → papel → geometría</span></div><button id="closeDrawer" class="topbar-btn" type="button" aria-label="Cerrar menú">×</button></div>
+    <nav class="drawer-nav">
+      <button class="active" data-app-view="home" type="button"><span>⌂</span><span>Inicio / imagen</span></button>
+      <button data-app-view="paper" type="button"><span>▱</span><span>Papel y escala</span></button>
+      <button data-app-view="measure" type="button"><span>⌖</span><span>Medición</span></button>
+      <button data-app-view="sketch" type="button"><span>✎</span><span>Dibujo → 3D</span></button>
+      <button data-app-view="geometry" type="button"><span>XYZ</span><span>Editor 3D</span></button>
+    </nav>
+    <div class="drawer-foot">
+      <div class="drawer-theme"><button id="themeDark" class="mini-btn active" type="button">🌙 Oscuro</button><button id="themeLight" class="mini-btn" type="button">☀️ Claro</button></div>
+      <p class="drawer-note">El icono sigue siendo el de la app/PWA, pero ya no ocupa espacio dentro de la interfaz.</p>
+    </div>
+  </aside>
+  <header class="app-topbar">
+    <button id="openDrawer" class="topbar-btn" type="button" aria-label="Abrir menú">☰</button>
+    <div class="topbar-title"><strong id="topbarTitle">Pixel Paper Mapper</strong><span id="topbarSubtitle">Inicio / imagen</span></div>
+    <button id="quickHome" class="topbar-btn" type="button" aria-label="Inicio">⌂</button>
+  </header>
+  <div id="appToast" class="toast"></div>
+
   <main class="app">
-    <header class="hero">
-      <div class="app-identity">
-        <img class="brand-icon" src="./icon-source.jpeg" alt="Pixel Paper Mapper" />
-        <div class="brand-copy">
-          <p class="kicker">PIXEL → PAPEL</p>
-          <h1>Pixel Paper Mapper</h1>
-          <p class="lead">Mide imágenes directamente, conviértelas a coordenadas físicas y explora geometría 3D sin salir de tu dispositivo.</p>
-        </div>
-        <div class="theme-stack">
-          <button id="themeDark" class="mini-btn active" type="button">🌙 Oscuro</button>
-          <button id="themeLight" class="mini-btn" type="button">☀️ Claro</button>
-        </div>
-      </div>
-      <div class="hero-badges">
-        <span class="pill">🔒 Todo se procesa en tu dispositivo</span>
-        <span class="pill">📐 Mantiene proporción real</span>
-        <span class="pill">📍 Puntos, lupa, crosshair y minimapa</span>
-      </div>
-    </header>
+    <div id="pageHeading" class="page-heading">
+      <p class="kicker">PIXEL → PAPEL</p>
+      <h1>Pixel Paper Mapper</h1>
+      <p>Trabaja por secciones: carga una imagen, mide, dibuja una idea o conviértela en una escena XYZ editable.</p>
+    </div>
 
     <section id="uploadPanel" class="panel">
       <div class="panel-header">
@@ -665,6 +710,38 @@
 
 
 
+    <section id="sketchPanel" class="panel">
+      <div class="panel-header">
+        <div class="panel-title-wrap"><div class="step">✎</div><div class="section-copy"><h2>Dibujo → 3D</h2><p>Dibuja una perspectiva. El analizador geométrico estima formas, orientación y un ángulo de cámara plausible y crea objetos editables en X, Y y Z.</p></div></div>
+      </div>
+      <div class="panel-content">
+        <div class="sketch-hint"><strong>Importante:</strong> una sola vista 2D no contiene una única respuesta 3D. La app infiere una solución plausible. Cuanto más claras sean las elipses, contornos y líneas de perspectiva, más estable será la estimación; después puedes corregirla en el Editor 3D.</div>
+        <div class="sketch-layout">
+          <div class="sketch-shell">
+            <div class="sketch-head"><strong>Tu boceto</strong><span class="muted">Dedo o formas</span></div>
+            <canvas id="sketchCanvas"></canvas>
+            <div class="sketch-tools">
+              <button class="mini-btn active" data-sketch-mode="free" type="button">✎ Libre</button>
+              <button class="mini-btn" data-sketch-mode="line" type="button">／ Línea</button>
+              <button class="mini-btn" data-sketch-mode="rect" type="button">▭ Plano</button>
+              <button class="mini-btn" data-sketch-mode="circle" type="button">○ Elipse</button>
+              <button id="sketchUndo" class="mini-btn" type="button">↶</button>
+              <button id="sketchClear" class="mini-btn" type="button">Limpiar</button>
+            </div>
+            <div class="auto-switch"><span><strong style="color:var(--text)">Auto 3D</strong><br>Reinterpreta al terminar cada trazo.</span><button id="sketchAuto" class="mini-btn active" type="button">Activado</button></div>
+            <div class="sketch-actions"><button id="sketchInterpret" class="btn primary" type="button">Interpretar ahora</button><button id="sketchOpen3D" class="btn" type="button">Abrir editor 3D</button></div>
+            <div id="sketchStatus" class="interpret-status"><strong>Listo para dibujar.</strong> Las líneas largas ayudan a estimar la perspectiva; elipses y contornos cerrados se convierten en objetos.</div>
+            <div id="sketchDetected" class="detected-list"></div>
+          </div>
+          <div>
+            <div class="sketch-head"><strong>Interpretación 3D en vivo</strong><span class="muted">X · Y · Z</span></div>
+            <div id="sketch3dHost" class="sketch-preview-host"></div>
+            <p class="geo-note">Elipses muy redondas con trazos internos se leen como esfera; dos elipses concéntricas como anillo; triángulos cerrados como cono; cuadriláteros como planos. Todo queda editable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="geometryPanel" class="panel collapsible">
       <div class="panel-header">
         <div class="panel-title-wrap">
@@ -687,6 +764,7 @@
             <button class="mini-btn" data-geo-add="plane" type="button">▱ Plano</button>
             <button class="mini-btn" data-geo-add="disc" type="button">○ Disco</button>
             <button class="mini-btn" data-geo-add="ring" type="button">◎ Anillo</button>
+            <button class="mini-btn" data-geo-add="cone" type="button">△ Cono</button>
           </div>
           <div class="small-actions">
             <button id="geoSolidBtn" class="mini-btn active" type="button">Sólido</button>
@@ -698,10 +776,12 @@
         </div>
 
         <div class="geo-layout">
-          <div class="geo-stage">
-            <div id="geoBadge" class="geo-badge">X · Y · Z · Vista libre</div>
-            <canvas id="geoCanvas"></canvas>
-            <div id="geoHelp" class="geo-help">Arrastra para rotar la cámara · pellizca para zoom · toca un objeto para seleccionarlo. Las formas no colisionan: pueden atravesarse entre sí.</div>
+          <div id="geometryCanvasHost">
+            <div id="geoStageShared" class="geo-stage">
+              <div id="geoBadge" class="geo-badge">X · Y · Z · Vista libre</div>
+              <canvas id="geoCanvas"></canvas>
+              <div id="geoHelp" class="geo-help">Arrastra para rotar la cámara · pellizca para zoom · toca un objeto para seleccionarlo. Las formas no colisionan: pueden atravesarse entre sí.</div>
+            </div>
           </div>
 
           <div class="geo-controls">
@@ -738,34 +818,15 @@
           </div>
         </div>
 
-        <div class="geo-sketch-wrap">
-          <div class="sketch-shell">
-            <div class="sketch-head"><strong>Boceto 2D de referencia</strong><span class="muted">No requiere IA</span></div>
-            <canvas id="sketchCanvas"></canvas>
-            <div class="sketch-tools">
-              <button class="mini-btn active" data-sketch-mode="free" type="button">✎ Libre</button>
-              <button class="mini-btn" data-sketch-mode="line" type="button">／ Línea</button>
-              <button class="mini-btn" data-sketch-mode="rect" type="button">▭ Rectángulo</button>
-              <button class="mini-btn" data-sketch-mode="circle" type="button">○ Círculo</button>
-              <button id="sketchClear" class="mini-btn" type="button">Limpiar</button>
-            </div>
-            <p class="geo-note">Úsalo para pensar la perspectiva con el dedo. La construcción 3D de la derecha se hace con las formas y controles superiores en tiempo real.</p>
-          </div>
-
-          <div class="geo-card">
-            <div class="geo-control-title"><strong>Puente con Pixel Paper Mapper</strong><span>Proyección 2D</span></div>
-            <p class="geo-note">La vista 3D es una proyección bidimensional. Puedes congelar exactamente el ángulo actual y convertir esa vista en una imagen medible dentro del selector normal.</p>
-            <div class="geo-bridge">
-              <button id="geoToMeasure" class="btn primary" type="button">Llevar vista a medición</button>
-              <button id="geoClearAll" class="btn" type="button">Vaciar escena</button>
-            </div>
-            <div class="geo-ai-note"><strong>IA geométrica:</strong> dejé la interfaz preparada para una futura interpretación del boceto, pero no incrusto una clave de API dentro de GitHub Pages porque quedaría pública. La conexión correcta necesita un endpoint seguro que guarde la clave fuera del iPhone y del repositorio.</div>
-          </div>
+        <div class="geo-card" style="margin-top:12px">
+          <div class="geo-control-title"><strong>Puente con Pixel Paper Mapper</strong><span>Proyección 2D</span></div>
+          <p class="geo-note">Congela exactamente el ángulo actual y conviértelo en una imagen medible dentro del selector.</p>
+          <div class="geo-bridge"><button id="geoToMeasure" class="btn primary" type="button">Llevar vista a medición</button><button id="geoClearAll" class="btn" type="button">Vaciar escena</button></div>
         </div>
       </div>
     </section>
 
-    <footer>V5 · Liquid Glass · medición directa · laboratorio geométrico XYZ · funciona offline.</footer>
+    <footer>V6 · Navegación por secciones · dibujo → 3D · laboratorio XYZ · funciona offline.</footer>
   </main>
 
   <script>
@@ -1371,6 +1432,20 @@
 
 
 
+
+    // ===== V6 · App navigation =====
+    const viewPanels={home:["uploadPanel"],paper:["paperPanel","resultsPanel"],measure:["pickerPanel"],sketch:["sketchPanel"],geometry:["geometryPanel"]};
+    const viewMeta={home:["Pixel Paper Mapper","Inicio / imagen"],paper:["Papel y escala","Plano físico opcional"],measure:["Medición","Píxeles → centímetros"],sketch:["Dibujo → 3D","Interpretación geométrica"],geometry:["Editor 3D","Objetos X · Y · Z"]};
+    let currentAppView="home",toastTimer=null;
+    function showToast(msg){const t=$("appToast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200);}
+    function setDrawer(open){document.body.classList.toggle("drawer-open",!!open);}
+    function moveGeoStage(view){const stage=$("geoStageShared");if(!stage)return;const host=view==="sketch"?$("sketch3dHost"):$("geometryCanvasHost");if(host&&stage.parentElement!==host)host.appendChild(stage);setTimeout(()=>{geoResize();geoDraw();},70);}
+    function navigateApp(view,opts={}){
+      if(view==="measure"&&!sourceImage){view="home";if(!opts.silent)showToast("Carga una imagen para abrir Medición");}
+      currentAppView=view;Object.values(viewPanels).flat().forEach(id=>$(id)?.classList.add("view-hidden"));(viewPanels[view]||[]).forEach(id=>$(id)?.classList.remove("view-hidden"));
+      document.querySelectorAll("[data-app-view]").forEach(b=>b.classList.toggle("active",b.dataset.appView===view));const meta=viewMeta[view]||viewMeta.home;$("topbarTitle").textContent=meta[0];$("topbarSubtitle").textContent=meta[1];$("pageHeading").classList.toggle("hidden",view!=="home");setDrawer(false);if(view==="sketch"||view==="geometry")moveGeoStage(view);if(view==="sketch")setTimeout(sketchResize,80);if(view==="measure")setTimeout(drawCanvas,70);window.scrollTo({top:0,behavior:opts.instant?"auto":"smooth"});
+    }
+    $("openDrawer").addEventListener("click",()=>setDrawer(true));$("closeDrawer").addEventListener("click",()=>setDrawer(false));$("drawerBackdrop").addEventListener("click",()=>setDrawer(false));$("quickHome").addEventListener("click",()=>navigateApp("home"));document.querySelectorAll("[data-app-view]").forEach(b=>b.addEventListener("click",()=>navigateApp(b.dataset.appView)));
     // ===== V5 · Direct workflow =====
     function setWorkflowMode(kind){
       const direct = kind === "direct";
@@ -1381,8 +1456,8 @@
         const toggle = document.querySelector('[data-toggle="paperPanelContent"]');
         content.classList.remove("hidden");
         if (toggle){ toggle.classList.add("active"); toggle.textContent = "▾"; }
-        setTimeout(() => $("paperPanel").scrollIntoView({behavior:"smooth",block:"start"}),80);
-      }
+        navigateApp("paper");
+      } else if (sourceImage){ navigateApp("measure"); }
     }
     $("directMeasureBtn").addEventListener("click", () => setWorkflowMode("direct"));
     $("guideMeasureBtn").addEventListener("click", () => setWorkflowMode("guide"));
@@ -1403,7 +1478,7 @@
       moved: false
     };
     const geoColors = ["#6aa8ff","#70e1ff","#8fa7ff","#78d7b2","#b7a1ff","#91c7ff","#a7d8ff"];
-    const geoNames = { box:"Cubo", sphere:"Esfera", cylinder:"Cilindro", plane:"Plano", disc:"Disco", ring:"Anillo" };
+    const geoNames = { box:"Cubo", sphere:"Esfera", cylinder:"Cilindro", plane:"Plano", disc:"Disco", ring:"Anillo", cone:"Cono" };
 
     function geoResize(){
       if (!geoCanvas) return;
@@ -1535,7 +1610,18 @@
         geoPoly(top,obj,geoRGBA(obj.color,obj.opacity*.38),geoRGBA(obj.color,obj.opacity+.12),1);geoPoly(bottom,obj,geoRGBA(obj.color,obj.opacity*.22),geoRGBA(obj.color,obj.opacity*.55),1);
       }
     }
-    function geoDrawObject(obj){if(obj.type==="box")geoDrawBox(obj);else if(obj.type==="sphere")geoDrawSphere(obj);else if(obj.type==="cylinder")geoDrawCylinder(obj);else if(obj.type==="plane")geoDrawPlane(obj,false,false);else if(obj.type==="disc")geoDrawPlane(obj,true,false);else if(obj.type==="ring")geoDrawPlane(obj,false,true);}
+    function geoDrawCone(obj){
+      const base=geoCirclePoints("xz",1,36,-1),apex={x:0,y:1,z:0};
+      if(obj.mode==="wire"){
+        geoWireLoop(base,obj,obj.color,obj.opacity,1.4);
+        for(let i=0;i<36;i+=6)geoLineObject(base[i],apex,obj,obj.color,1.2,obj.opacity);
+      }else{
+        const faces=[];for(let i=0;i<36;i++){const j=(i+1)%36;faces.push([base[i],base[j],apex]);}
+        faces.sort((a,b)=>geoFaceDepth(a,obj)-geoFaceDepth(b,obj)).forEach((f,i)=>geoPoly(f,obj,geoRGBA(obj.color,obj.opacity*(.18+(i/36)*.24)),geoRGBA(obj.color,obj.opacity*.50),1));
+        geoPoly(base,obj,geoRGBA(obj.color,obj.opacity*.28),geoRGBA(obj.color,obj.opacity*.55),1);
+      }
+    }
+    function geoDrawObject(obj){if(obj.type==="box")geoDrawBox(obj);else if(obj.type==="sphere")geoDrawSphere(obj);else if(obj.type==="cylinder")geoDrawCylinder(obj);else if(obj.type==="plane")geoDrawPlane(obj,false,false);else if(obj.type==="disc")geoDrawPlane(obj,true,false);else if(obj.type==="ring")geoDrawPlane(obj,false,true);else if(obj.type==="cone")geoDrawCone(obj);}
 
     function geoDraw(){
       if(!geoCanvas) return;const rect=geoCanvas.getBoundingClientRect();if(rect.width<10)return;
@@ -1573,7 +1659,7 @@
     function geoPointerUp(e){if(!geoState.pointers.has(e.pointerId))return;e.preventDefault();const wasOne=geoState.pointers.size===1;geoState.pointers.delete(e.pointerId);if(wasOne&&!geoState.moved){const hit=geoHit(e.clientX,e.clientY);if(hit){geoState.selectedId=hit.id;geoSyncControls();geoRenderList();geoDraw();}}if(!geoState.pointers.size){geoState.gesture=null;geoState.moved=false;}}
 
     function geoLoadSceneAsImage(){
-      geoDraw();const url=geoCanvas.toDataURL("image/png");const img=new Image();img.onload=()=>{sourceImage=img;imageW=img.naturalWidth;imageH=img.naturalHeight;objectUrl=url;points=[];activePointId=null;nextPointNumber=1;editPointId=null;view={zoom:1,panX:0,panY:0};undoStack=[];redoStack=[];$("imageDimensions").textContent=`${imageW.toLocaleString("es-MX")} × ${imageH.toLocaleString("es-MX")} px`;$("imageInfo").classList.remove("hidden");updateAll();setWorkflowMode("direct");setTimeout(()=>$("pickerPanel").scrollIntoView({behavior:"smooth",block:"start"}),120);};img.src=url;
+      geoDraw();const url=geoCanvas.toDataURL("image/png");const img=new Image();img.onload=()=>{sourceImage=img;imageW=img.naturalWidth;imageH=img.naturalHeight;objectUrl=url;points=[];activePointId=null;nextPointNumber=1;editPointId=null;view={zoom:1,panX:0,panY:0};undoStack=[];redoStack=[];$("imageDimensions").textContent=`${imageW.toLocaleString("es-MX")} × ${imageH.toLocaleString("es-MX")} px`;$("imageInfo").classList.remove("hidden");updateAll();setWorkflowMode("direct");setTimeout(()=>navigateApp("measure"),120);};img.src=url;
     }
     function geoCopyXYZ(){const o=geoSelected();if(!o)return;copyText(`${o.name}\nCentro XYZ: (${o.pos.x.toFixed(2)}, ${o.pos.y.toFixed(2)}, ${o.pos.z.toFixed(2)})\nEscala XYZ: (${o.scale.x.toFixed(2)}, ${o.scale.y.toFixed(2)}, ${o.scale.z.toFixed(2)})\nRotación XYZ: (${o.rot.x.toFixed(0)}°, ${o.rot.y.toFixed(0)}°, ${o.rot.z.toFixed(0)}°)\nModo: ${o.mode==="wire"?"esqueleto":"sólido"}`);}
 
@@ -1592,25 +1678,91 @@
       $("geoObjectList").addEventListener("click",e=>{const sel=e.target.closest('[data-geo-select]');const rem=e.target.closest('[data-geo-remove]');if(sel){geoState.selectedId=sel.dataset.geoSelect;geoSyncControls();geoRenderList();geoDraw();}if(rem){geoState.objects=geoState.objects.filter(o=>o.id!==rem.dataset.geoRemove);if(geoState.selectedId===rem.dataset.geoRemove)geoState.selectedId=geoState.objects.at(-1)?.id||null;geoSyncControls();geoRenderList();geoDraw();}});
       geoCanvas.addEventListener("pointerdown",geoPointerDown,{passive:false});geoCanvas.addEventListener("pointermove",geoPointerMove,{passive:false});geoCanvas.addEventListener("pointerup",geoPointerUp,{passive:false});geoCanvas.addEventListener("pointercancel",geoPointerUp,{passive:false});
       window.addEventListener("resize",()=>setTimeout(geoResize,100));
-      geoRenderList();geoSyncControls();setTimeout(geoResize,80);geoAdd("plane");geoAdd("ring");
+      geoRenderList();geoSyncControls();setTimeout(geoResize,80);
       initSketchPad();
     }
 
-    // 2D sketch pad: freehand + basic shapes, entirely local/offline.
+    // ===== V6 · Sketch → 3D local geometric inference =====
+    const sketchState={mode:"free",strokes:[],drawing:false,current:null,start:null,auto:true};
+
+    function sketchCanvasCtx(){const sc=$("sketchCanvas");return {sc,ctx:sc.getContext("2d")};}
+    function sketchResize(){
+      const {sc}=sketchCanvasCtx();if(!sc)return;const r=sc.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);sc.width=Math.max(1,Math.round(r.width*d));sc.height=Math.round(300*d);sc.getContext("2d").setTransform(d,0,0,d,0,0);sketchRedraw();
+    }
+    function sketchPaper(ctx,w,h){ctx.fillStyle="#fbfbfa";ctx.fillRect(0,0,w,h);ctx.strokeStyle="rgba(30,60,90,.075)";ctx.lineWidth=1;for(let x=0;x<w;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(let y=0;y<h;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}}
+    function sketchDrawStroke(ctx,s){
+      if(!s.points?.length)return;ctx.save();ctx.strokeStyle="#17212d";ctx.lineWidth=2.2;ctx.lineCap="round";ctx.lineJoin="round";ctx.beginPath();ctx.moveTo(s.points[0].x,s.points[0].y);for(let i=1;i<s.points.length;i++)ctx.lineTo(s.points[i].x,s.points[i].y);if(s.closed)ctx.closePath();ctx.stroke();ctx.restore();
+    }
+    function sketchRedraw(){const {sc,ctx}=sketchCanvasCtx();if(!sc)return;const r=sc.getBoundingClientRect();sketchPaper(ctx,r.width,300);sketchState.strokes.forEach(s=>sketchDrawStroke(ctx,s));if(sketchState.current)sketchDrawStroke(ctx,sketchState.current);}
+    function sketchPos(e){const r=$("sketchCanvas").getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+    function resampleShape(mode,a,b){
+      if(mode==="line")return[{x:a.x,y:a.y},{x:b.x,y:b.y}];
+      if(mode==="rect")return[{x:a.x,y:a.y},{x:b.x,y:a.y},{x:b.x,y:b.y},{x:a.x,y:b.y},{x:a.x,y:a.y}];
+      if(mode==="circle"){const rx=Math.max(2,Math.abs(b.x-a.x)),ry=Math.max(2,Math.abs(b.y-a.y)),pts=[];for(let i=0;i<=64;i++){const t=i/64*Math.PI*2;pts.push({x:a.x+Math.cos(t)*rx,y:a.y+Math.sin(t)*ry});}return pts;}
+      return[];
+    }
+    function sketchBBox(points){let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;points.forEach(p=>{minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x);maxY=Math.max(maxY,p.y)});return{minX,minY,maxX,maxY,w:maxX-minX,h:maxY-minY,cx:(minX+maxX)/2,cy:(minY+maxY)/2,diag:Math.hypot(maxX-minX,maxY-minY)};}
+    function sketchPathLength(points){let L=0;for(let i=1;i<points.length;i++)L+=Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y);return L;}
+    function sketchPCA(points){
+      const n=Math.max(1,points.length);let mx=0,my=0;points.forEach(p=>{mx+=p.x;my+=p.y});mx/=n;my/=n;let xx=0,yy=0,xy=0;points.forEach(p=>{const x=p.x-mx,y=p.y-my;xx+=x*x;yy+=y*y;xy+=x*y});xx/=n;yy/=n;xy/=n;const tr=xx+yy,det=xx*yy-xy*xy,d=Math.sqrt(Math.max(0,tr*tr/4-det));const l1=tr/2+d,l2=tr/2-d;const angle=.5*Math.atan2(2*xy,xx-yy);return{mx,my,l1,l2,angle,ratio:Math.sqrt(Math.max(1e-6,l2)/Math.max(1e-6,l1))};
+    }
+    function pointLineDist(p,a,b){const dx=b.x-a.x,dy=b.y-a.y;if(dx===0&&dy===0)return Math.hypot(p.x-a.x,p.y-a.y);const t=((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy);const q={x:a.x+t*dx,y:a.y+t*dy};return Math.hypot(p.x-q.x,p.y-q.y);}
+    function rdp(points,eps){if(points.length<3)return points.slice();let idx=-1,max=0;for(let i=1;i<points.length-1;i++){const d=pointLineDist(points[i],points[0],points.at(-1));if(d>max){idx=i;max=d}}if(max>eps){const a=rdp(points.slice(0,idx+1),eps),b=rdp(points.slice(idx),eps);return a.slice(0,-1).concat(b)}return[points[0],points.at(-1)];}
+    function sketchStrokeFeatures(stroke){
+      const pts=stroke.points,b=sketchBBox(pts),L=sketchPathLength(pts),pca=sketchPCA(pts);const endDist=Math.hypot(pts[0].x-pts.at(-1).x,pts[0].y-pts.at(-1).y);const closed=stroke.closed||((pts.length>8||stroke.kind==="free")&&endDist<Math.max(14,b.diag*.16));const simp=rdp(pts,Math.max(3,b.diag*.045));let corners=simp.length-(closed?1:0);if(stroke.kind==="rect")corners=4;if(stroke.kind==="circle")corners=0;const straight=L>0?Math.hypot(pts[0].x-pts.at(-1).x,pts[0].y-pts.at(-1).y)/L:0;return{stroke,b,L,pca,closed,corners,straight,simp};
+    }
+    function sketchInside(a,b){return a.b.cx>b.b.minX&&a.b.cx<b.b.maxX&&a.b.cy>b.b.minY&&a.b.cy<b.b.maxY&&a.b.w<b.b.w*.78&&a.b.h<b.b.h*.78;}
+    function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+    function geoObjFromSketch(type,feat,index,mode="wire"){
+      const sc=$("sketchCanvas"),r=sc.getBoundingClientRect(),b=feat.b,pca=feat.pca;const nx=(b.cx/r.width-.5)*2,ny=(b.cy/300-.5)*2;const sx=clamp(b.w/r.width*5,.25,3.5),sy=clamp(b.h/300*4,.18,3.2);const ratio=clamp(Math.min(b.w,b.h)/Math.max(1,Math.max(b.w,b.h)),.06,1);const ellipseTilt=Math.acos(ratio)*180/Math.PI;const n=geoState.nextId++;
+      const obj={id:`g${n}`,type,name:`${geoNames[type]} ${n}`,pos:{x:nx*2.4,y:type==="plane"||type==="disc"||type==="ring"?.35:1,z:ny*2.2},scale:{x:sx,y:sx,z:sx},rot:{x:0,y:0,z:pca.angle*180/Math.PI},opacity:.62,mode,color:geoColors[(n-1)%geoColors.length],source:"sketch"};
+      if(type==="plane"){obj.scale={x:sx,y:Math.max(.25,sy),z:1};obj.rot.x=-65;}
+      if(type==="disc"||type==="ring"){obj.scale={x:sx,y:sx,z:1};obj.rot.x=-clamp(ellipseTilt+22,18,86);}
+      if(type==="sphere"){obj.scale={x:Math.max(.35,(sx+sy)/2),y:Math.max(.35,(sx+sy)/2),z:Math.max(.35,(sx+sy)/2)};obj.rot={x:0,y:0,z:0};}
+      if(type==="cone"){obj.scale={x:Math.max(.35,sx*.8),y:Math.max(.35,sy),z:Math.max(.35,sx*.8)};obj.rot={x:0,y:0,z:pca.angle*180/Math.PI};}
+      return obj;
+    }
+    function sketchInferCamera(features){
+      const plane=features.find(f=>f.closed&&(f.stroke.kind==="rect"||f.corners===4));const ellipse=features.find(f=>f.closed&&(f.stroke.kind==="circle"||f.corners>5));const ref=plane||ellipse;if(!ref)return{yaw:-.62,pitch:.48,zoom:1};const ang=ref.pca.angle;let flatten=clamp(Math.min(ref.b.w,ref.b.h)/Math.max(ref.b.w,ref.b.h),.08,1);return{yaw:clamp(-.48-ang*.55,-1.25,.55),pitch:clamp(.20+flatten*.72,.18,1.05),zoom:1};
+    }
+    function sketchInterpret(showMessage=true){
+      const raw=sketchState.strokes.filter(s=>s.points?.length>1);if(!raw.length){if(showMessage)showToast("Dibuja algo primero");return;}
+      const features=raw.map(sketchStrokeFeatures);const generated=[],detected=[],used=new Set();
+      // Nested closed loops become a ring.
+      for(let i=0;i<features.length;i++){if(used.has(i))continue;const a=features[i];if(!a.closed)continue;for(let j=0;j<features.length;j++){if(i===j||used.has(j))continue;const b=features[j];if(!b.closed)continue;const outer=a.b.w*a.b.h>b.b.w*b.b.h?a:b,inner=outer===a?b:a;if(sketchInside(inner,outer)){generated.push(geoObjFromSketch("ring",outer,i,"wire"));detected.push({name:"Anillo",confidence:.92});used.add(i);used.add(j);break;}}}
+      for(let i=0;i<features.length;i++){
+        if(used.has(i))continue;const f=features[i];if(f.b.diag<18)continue;
+        if(!f.closed&&f.straight>.92){detected.push({name:"Línea de perspectiva",confidence:.88,guide:true});continue;}
+        let type=null,confidence=.62;
+        if(f.closed&&(f.stroke.kind==="rect"||f.corners===4)){type="plane";confidence=f.stroke.kind==="rect"?.96:.82;}
+        else if(f.closed&&(f.corners===3)){type="cone";confidence=.72;}
+        else if(f.closed){
+          const crossing=features.some((g,j)=>j!==i&&!g.closed&&g.b.cx>f.b.minX&&g.b.cx<f.b.maxX&&g.b.cy>f.b.minY&&g.b.cy<f.b.maxY&&g.b.w>f.b.w*.45);
+          const roundness=clamp(f.pca.ratio,0,1);if(roundness>.76&&crossing){type="sphere";confidence=.80;}else{type="disc";confidence=f.stroke.kind==="circle"?.94:clamp(.64+roundness*.20,.64,.84);}
+        } else if(f.corners>=5&&f.straight<.65){type="box";confidence=.55;}
+        if(type){generated.push(geoObjFromSketch(type,f,i,type==="sphere"?"wire":"wire"));detected.push({name:geoNames[type],confidence});}
+      }
+      if(!generated.length){if(showMessage)showToast("Veo trazos, pero aún no un contorno 3D claro");$("sketchStatus").innerHTML="<strong>Aún ambiguo.</strong> Cierra una elipse, triángulo o cuadrilátero; las líneas abiertas se usan como perspectiva.";return;}
+      geoState.objects=geoState.objects.filter(o=>o.source!=="sketch");geoState.objects.push(...generated);geoState.selectedId=generated.at(-1)?.id||null;const cam=sketchInferCamera(features);geoState.camera={...geoState.camera,...cam};geoState.viewMode="static";$("geoFreeBtn").classList.remove("active");$("geoStaticBtn").classList.add("active");geoRenderList();geoSyncControls();geoDraw();sketchRenderDetected(detected,features,generated);if(showMessage)showToast(`Interpreté ${generated.length} objeto${generated.length===1?"":"s"} en 3D`);
+    }
+    function sketchRenderDetected(items,features,generated){
+      const useful=items.filter(x=>!x.guide),avg=useful.length?useful.reduce((a,b)=>a+b.confidence,0)/useful.length:0;$("sketchStatus").innerHTML=`<strong>${generated.length} objeto${generated.length===1?"":"s"} generado${generated.length===1?"":"s"}.</strong> Confianza geométrica aproximada: ${Math.round(avg*100)}%. Cámara estimada desde la orientación y el aplastamiento de los contornos.`;const box=$("sketchDetected");box.innerHTML="";items.forEach(x=>{const row=document.createElement("div");row.className="detected-row";row.innerHTML=`<span>${x.guide?"↗ ":"◈ "}${x.name}</span><span>${Math.round(x.confidence*100)}%</span>`;box.appendChild(row);});
+    }
+    function sketchCommitCurrent(){if(!sketchState.current)return;const s=sketchState.current;if(s.kind==="free"){const b=sketchBBox(s.points);const d=Math.hypot(s.points[0].x-s.points.at(-1).x,s.points[0].y-s.points.at(-1).y);s.closed=s.points.length>8&&d<Math.max(14,b.diag*.16);}else s.closed=s.kind!=="line";sketchState.strokes.push(s);sketchState.current=null;sketchRedraw();if(sketchState.auto)setTimeout(()=>sketchInterpret(false),10);}
     function initSketchPad(){
-      const sc=$("sketchCanvas"),sx=sc.getContext("2d");let mode="free",drawing=false,start=null,last=null,snapshot=null;
-      function resize(){const r=sc.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);const old=document.createElement("canvas");old.width=sc.width;old.height=sc.height;old.getContext("2d").drawImage(sc,0,0);sc.width=Math.round(r.width*d);sc.height=Math.round(250*d);sx.setTransform(d,0,0,d,0,0);drawPaper();if(old.width)sx.drawImage(old,0,0,old.width,old.height,0,0,r.width,250);}
-      function drawPaper(){const r=sc.getBoundingClientRect();sx.fillStyle="#fbfbfa";sx.fillRect(0,0,r.width,250);sx.strokeStyle="rgba(30,60,90,.08)";sx.lineWidth=1;for(let x=0;x<r.width;x+=20){sx.beginPath();sx.moveTo(x,0);sx.lineTo(x,250);sx.stroke();}for(let y=0;y<250;y+=20){sx.beginPath();sx.moveTo(0,y);sx.lineTo(r.width,y);sx.stroke();}}
-      function pos(e){const r=sc.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
-      sc.addEventListener("pointerdown",e=>{e.preventDefault();sc.setPointerCapture?.(e.pointerId);drawing=true;start=last=pos(e);snapshot=sx.getImageData(0,0,sc.width,sc.height);});
-      sc.addEventListener("pointermove",e=>{if(!drawing)return;e.preventDefault();const p=pos(e);sx.strokeStyle="#17212d";sx.lineWidth=2;sx.lineCap="round";sx.lineJoin="round";if(mode==="free"){sx.beginPath();sx.moveTo(last.x,last.y);sx.lineTo(p.x,p.y);sx.stroke();last=p;}else{sx.putImageData(snapshot,0,0);sx.beginPath();if(mode==="line"){sx.moveTo(start.x,start.y);sx.lineTo(p.x,p.y);}else if(mode==="rect"){sx.rect(start.x,start.y,p.x-start.x,p.y-start.y);}else if(mode==="circle"){const rx=Math.abs(p.x-start.x),ry=Math.abs(p.y-start.y);sx.ellipse(start.x,start.y,rx,ry,0,0,Math.PI*2);}sx.stroke();}});
-      const up=()=>{drawing=false;snapshot=null;};sc.addEventListener("pointerup",up);sc.addEventListener("pointercancel",up);
-      document.querySelectorAll('[data-sketch-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.sketchMode;document.querySelectorAll('[data-sketch-mode]').forEach(x=>x.classList.toggle('active',x===b));}));
-      $("sketchClear").addEventListener("click",drawPaper);window.addEventListener("resize",()=>setTimeout(resize,120));setTimeout(resize,100);
+      const sc=$("sketchCanvas");if(!sc)return;sc.addEventListener("pointerdown",e=>{e.preventDefault();sc.setPointerCapture?.(e.pointerId);const p=sketchPos(e);sketchState.drawing=true;sketchState.start=p;sketchState.current={kind:sketchState.mode,points:[p],closed:false};});
+      sc.addEventListener("pointermove",e=>{if(!sketchState.drawing)return;e.preventDefault();const p=sketchPos(e);if(sketchState.mode==="free"){const last=sketchState.current.points.at(-1);if(Math.hypot(p.x-last.x,p.y-last.y)>2.2)sketchState.current.points.push(p);}else sketchState.current.points=resampleShape(sketchState.mode,sketchState.start,p);sketchRedraw();});
+      const up=e=>{if(!sketchState.drawing)return;e?.preventDefault?.();sketchState.drawing=false;if(sketchState.current?.points?.length===1)sketchState.current.points.push({...sketchState.current.points[0],x:sketchState.current.points[0].x+1});sketchCommitCurrent();};sc.addEventListener("pointerup",up);sc.addEventListener("pointercancel",up);
+      document.querySelectorAll('[data-sketch-mode]').forEach(b=>b.addEventListener('click',()=>{sketchState.mode=b.dataset.sketchMode;document.querySelectorAll('[data-sketch-mode]').forEach(x=>x.classList.toggle('active',x===b));}));
+      $("sketchUndo").addEventListener("click",()=>{sketchState.strokes.pop();sketchRedraw();if(sketchState.auto)sketchInterpret(false);});
+      $("sketchClear").addEventListener("click",()=>{sketchState.strokes=[];sketchState.current=null;sketchRedraw();geoState.objects=geoState.objects.filter(o=>o.source!=="sketch");geoState.selectedId=geoState.objects.at(-1)?.id||null;geoRenderList();geoSyncControls();geoDraw();$("sketchDetected").innerHTML="";$("sketchStatus").innerHTML="<strong>Listo para dibujar.</strong> Las líneas largas ayudan a estimar la perspectiva; elipses y contornos cerrados se convierten en objetos.";});
+      $("sketchInterpret").addEventListener("click",()=>sketchInterpret(true));$("sketchAuto").addEventListener("click",()=>{sketchState.auto=!sketchState.auto;$("sketchAuto").classList.toggle("active",sketchState.auto);$("sketchAuto").textContent=sketchState.auto?"Activado":"Pausado";if(sketchState.auto)sketchInterpret(false);});$("sketchOpen3D").addEventListener("click",()=>navigateApp("geometry"));
+      window.addEventListener("resize",()=>setTimeout(sketchResize,120));setTimeout(sketchResize,100);
     }
 
 
-    applyPreset("pref"); updateOrientationButtons(); updateCrosshairOutputs(); updateModeHelp(); updateUndoRedoButtons(); setCrosshairAction("aim"); $("crosshairPanel").classList.add("hidden"); setTheme(theme); initGeometryLab();
+
+    applyPreset("pref"); updateOrientationButtons(); updateCrosshairOutputs(); updateModeHelp(); updateUndoRedoButtons(); setCrosshairAction("aim"); $("crosshairPanel").classList.add("hidden"); setTheme(theme); initGeometryLab(); navigateApp("home",{silent:true,instant:true});
   })();
   </script>
 
