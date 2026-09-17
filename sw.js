@@ -1,11 +1,12 @@
-const CACHE_NAME = 'pixel-paper-mapper-v4-pwa-1';
+const CACHE_NAME = 'pixel-paper-mapper-v5-geometry-1';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './icon-source.jpeg'
 ];
 
 self.addEventListener('install', event => {

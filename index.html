@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0b0d10" />
-  <title>Pixel Paper Mapper V4</title>
+  <title>Pixel Paper Mapper V5</title>
   <style>
     :root{
       --bg:#0b0d10;
@@ -223,6 +223,123 @@
       .panel-header{padding-right:14px}
       .panel-content{padding:16px}
     }
+
+
+    /* ===== V5 · Liquid Glass refinements ===== */
+    :root{
+      --bg:#02060c;
+      --bg-2:#07101d;
+      --panel:rgba(10,20,35,.62);
+      --panel-soft:rgba(8,17,30,.60);
+      --panel-2:rgba(6,14,25,.72);
+      --line:rgba(151,190,236,.18);
+      --accent-soft:rgba(92,156,255,.16);
+      --accent-line:rgba(112,176,255,.43);
+      --glass-shine:rgba(255,255,255,.09);
+      --glass-shadow:0 18px 45px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    body.theme-light{
+      --panel:rgba(255,255,255,.66);
+      --panel-soft:rgba(255,255,255,.58);
+      --panel-2:rgba(242,247,255,.72);
+      --line:rgba(42,78,123,.14);
+      --glass-shine:rgba(255,255,255,.78);
+      --glass-shadow:0 16px 36px rgba(36,67,108,.10), inset 0 1px 0 rgba(255,255,255,.86);
+    }
+    .panel,.tile,.metric,.coord,.point-card,.group-section,.crosshair-panel,.mode-help,.app-identity,.workflow-mode,.geo-card{
+      -webkit-backdrop-filter:blur(24px) saturate(145%);
+      backdrop-filter:blur(24px) saturate(145%);
+      box-shadow:var(--glass-shadow);
+    }
+    .panel{
+      background:
+        linear-gradient(150deg, rgba(255,255,255,.065), rgba(255,255,255,.015) 44%, rgba(83,145,255,.035)),
+        var(--panel);
+      border-color:var(--line);
+    }
+    .mini-btn,.toolbar-btn,.chip,.collapse-btn,.btn,.segmented,.input-wrap,.select-wrap{
+      -webkit-backdrop-filter:blur(18px) saturate(140%);
+      backdrop-filter:blur(18px) saturate(140%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .mini-btn.active,.toolbar-btn.active,.chip.active,.collapse-btn.active,.btn.primary,.segmented button.active{
+      box-shadow:0 0 20px rgba(74,145,255,.11), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .app-identity{
+      display:grid;
+      grid-template-columns:72px minmax(0,1fr) auto;
+      gap:14px;
+      align-items:center;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.015)),var(--panel);
+    }
+    .brand-icon{
+      width:72px;height:72px;object-fit:cover;border-radius:18px;
+      box-shadow:0 8px 26px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.12);
+    }
+    .brand-copy h1{margin:2px 0 6px;font-size:27px}
+    .brand-copy .lead{font-size:13px;max-width:520px}
+    .brand-copy .kicker{margin-bottom:3px}
+    .theme-stack{display:grid;grid-template-columns:1fr 1fr;gap:6px;min-width:170px}
+    .workflow-mode{
+      margin-top:12px;padding:8px;border:1px solid var(--line);border-radius:16px;
+      background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),var(--panel-soft);
+      display:grid;grid-template-columns:1fr 1fr;gap:7px;
+    }
+    .workflow-option{
+      min-height:52px;border:1px solid transparent;border-radius:13px;background:transparent;color:var(--muted);
+      display:flex;align-items:center;gap:10px;padding:8px 12px;text-align:left;
+    }
+    .workflow-option strong{display:block;color:var(--text);font-size:13px}
+    .workflow-option small{display:block;margin-top:2px;font-size:11px;color:var(--muted);line-height:1.25}
+    .workflow-option.active{border-color:var(--accent-line);background:var(--accent-soft);box-shadow:0 0 18px rgba(77,146,255,.10)}
+    .workflow-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(80,147,255,.12);color:var(--accent-2);font-size:18px;flex:0 0 auto}
+
+    /* Geometry Lab */
+    .geo-card{border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.012)),var(--panel-soft);padding:12px}
+    .geo-toolbar{display:grid;gap:10px;margin-bottom:12px}
+    .geo-shapes{display:flex;flex-wrap:wrap;gap:7px}
+    .geo-shapes .mini-btn{min-height:38px}
+    .geo-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(250px,.8fr);gap:12px;align-items:start}
+    .geo-stage{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(circle at 50% 35%,rgba(55,105,175,.14),transparent 45%),#040912;min-height:420px}
+    #geoCanvas{display:block;width:100%;height:420px;touch-action:none}
+    .geo-badge{position:absolute;left:10px;top:10px;z-index:2;padding:7px 10px;border-radius:999px;background:rgba(4,9,18,.68);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(12px);font-size:11px;color:#d9e8ff;pointer-events:none}
+    .geo-help{position:absolute;left:10px;right:10px;bottom:10px;z-index:2;padding:8px 10px;border-radius:12px;background:rgba(4,9,18,.66);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(10px);font-size:11px;color:#aebcd0;pointer-events:none}
+    .geo-controls{display:grid;gap:10px}
+    .geo-control-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .geo-control-title strong{font-size:14px}
+    .geo-control-title span{font-size:11px;color:var(--muted)}
+    .geo-slider{display:grid;grid-template-columns:34px 1fr 54px;gap:8px;align-items:center}
+    .geo-slider label{font-size:12px;font-weight:800;color:var(--muted)}
+    .geo-slider output{text-align:right;font-size:11px;color:var(--accent-2);font-variant-numeric:tabular-nums}
+    .geo-slider input{margin:0}
+    .geo-section-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.10em;margin:2px 0 -2px}
+    .geo-sketch-wrap{margin-top:12px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+    .sketch-shell{padding:10px;border:1px solid var(--line);border-radius:16px;background:var(--panel-soft)}
+    .sketch-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
+    .sketch-head strong{font-size:13px}
+    #sketchCanvas{display:block;width:100%;height:250px;border-radius:12px;background:#fbfbfa;touch-action:none;border:1px solid rgba(0,0,0,.12)}
+    .sketch-tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .geo-note{font-size:12px;line-height:1.45;color:var(--muted);margin:8px 0 0}
+    .geo-object-list{display:grid;gap:7px;max-height:190px;overflow:auto}
+    .geo-object-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
+    .geo-object-row.active{border-color:var(--accent-line);background:var(--accent-soft)}
+    .geo-object-row button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--text)}
+    .geo-bridge{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .geo-ai-note{margin-top:12px;padding:10px 12px;border-radius:13px;border:1px dashed var(--line);background:rgba(255,255,255,.02);font-size:11px;color:var(--muted);line-height:1.45}
+    body.theme-light .geo-stage{background:radial-gradient(circle at 50% 35%,rgba(55,108,255,.09),transparent 45%),#eef4fb}
+    body.theme-light .geo-badge,body.theme-light .geo-help{background:rgba(255,255,255,.78);color:#315175;border-color:rgba(0,0,0,.08)}
+    @media(max-width:760px){
+      .app-identity{grid-template-columns:58px minmax(0,1fr)}
+      .brand-icon{width:58px;height:58px;border-radius:15px}
+      .theme-stack{grid-column:1/-1;grid-template-columns:1fr 1fr;min-width:0}
+      .geo-layout,.geo-sketch-wrap{grid-template-columns:1fr}
+      #geoCanvas{height:390px}
+      .geo-stage{min-height:390px}
+    }
+
   </style>
 
   <link rel="manifest" href="./manifest.webmanifest" />
@@ -234,15 +351,18 @@
 <body>
   <main class="app">
     <header class="hero">
-      <div class="hero-top">
-        <p class="kicker">PIXEL → PAPEL</p>
-        <div class="small-actions">
+      <div class="app-identity">
+        <img class="brand-icon" src="./icon-source.jpeg" alt="Pixel Paper Mapper" />
+        <div class="brand-copy">
+          <p class="kicker">PIXEL → PAPEL</p>
+          <h1>Pixel Paper Mapper</h1>
+          <p class="lead">Mide imágenes directamente, conviértelas a coordenadas físicas y explora geometría 3D sin salir de tu dispositivo.</p>
+        </div>
+        <div class="theme-stack">
           <button id="themeDark" class="mini-btn active" type="button">🌙 Oscuro</button>
           <button id="themeLight" class="mini-btn" type="button">☀️ Claro</button>
         </div>
       </div>
-      <h1>Pixel Paper Mapper</h1>
-      <p class="lead">Versión corregida: preset de preferencias, secciones desplegables, reglas fijas en zoom, crosshair con modo para mover la imagen y tema claro/oscuro con toque espacial minimalista.</p>
       <div class="hero-badges">
         <span class="pill">🔒 Todo se procesa en tu dispositivo</span>
         <span class="pill">📐 Mantiene proporción real</span>
@@ -268,6 +388,16 @@
         </label>
         <input id="imageInput" class="sr-only" type="file" accept="image/*" />
         <div id="imageInfo" class="image-info hidden"><span>Dimensiones originales</span><strong id="imageDimensions">—</strong></div>
+        <div class="workflow-mode" aria-label="Modo de trabajo">
+          <button id="directMeasureBtn" class="workflow-option active" type="button">
+            <span class="workflow-icon">⌖</span>
+            <span><strong>Medir directo</strong><small>La imagen queda lista; usa tus preferencias de papel en segundo plano.</small></span>
+          </button>
+          <button id="guideMeasureBtn" class="workflow-option" type="button">
+            <span class="workflow-icon">▦</span>
+            <span><strong>Plano guía</strong><small>Abre medidas, orientación y posición sobre la hoja.</small></span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -281,10 +411,10 @@
           </div>
         </div>
         <div class="panel-actions">
-          <button class="collapse-btn active" data-toggle="paperPanelContent" type="button">▾</button>
+          <button class="collapse-btn" data-toggle="paperPanelContent" type="button">▸</button>
         </div>
       </div>
-      <div id="paperPanelContent" class="panel-content">
+      <div id="paperPanelContent" class="panel-content hidden">
         <div class="controls-grid">
           <div class="field">
             <label for="paperPreset">Preset de hoja</label>
@@ -533,7 +663,109 @@
       </div>
     </section>
 
-    <footer>V4 · Corregida para móvil · Reglas fijas · Crosshair con modo mover imagen · Preferencias 21.6 × 28 cm.</footer>
+
+
+    <section id="geometryPanel" class="panel collapsible">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <div class="step">5</div>
+          <div class="section-copy">
+            <h2>Laboratorio geométrico 3D</h2>
+            <p>Construye formas sobre ejes X, Y y Z. Pueden ser sólidas o de puro esqueleto, atravesarse entre sí y verse desde cualquier ángulo.</p>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button class="collapse-btn active" data-toggle="geometryPanelContent" type="button">▾</button>
+        </div>
+      </div>
+      <div id="geometryPanelContent" class="panel-content">
+        <div class="geo-toolbar">
+          <div class="geo-shapes" aria-label="Añadir forma">
+            <button class="mini-btn" data-geo-add="box" type="button">▣ Cubo</button>
+            <button class="mini-btn" data-geo-add="sphere" type="button">● Esfera</button>
+            <button class="mini-btn" data-geo-add="cylinder" type="button">◉ Cilindro</button>
+            <button class="mini-btn" data-geo-add="plane" type="button">▱ Plano</button>
+            <button class="mini-btn" data-geo-add="disc" type="button">○ Disco</button>
+            <button class="mini-btn" data-geo-add="ring" type="button">◎ Anillo</button>
+          </div>
+          <div class="small-actions">
+            <button id="geoSolidBtn" class="mini-btn active" type="button">Sólido</button>
+            <button id="geoWireBtn" class="mini-btn" type="button">Esqueleto</button>
+            <button id="geoFreeBtn" class="mini-btn active" type="button">Vista libre</button>
+            <button id="geoStaticBtn" class="mini-btn" type="button">Estático</button>
+            <button id="geoResetCamera" class="mini-btn" type="button">Centrar vista</button>
+          </div>
+        </div>
+
+        <div class="geo-layout">
+          <div class="geo-stage">
+            <div id="geoBadge" class="geo-badge">X · Y · Z · Vista libre</div>
+            <canvas id="geoCanvas"></canvas>
+            <div id="geoHelp" class="geo-help">Arrastra para rotar la cámara · pellizca para zoom · toca un objeto para seleccionarlo. Las formas no colisionan: pueden atravesarse entre sí.</div>
+          </div>
+
+          <div class="geo-controls">
+            <div class="geo-card">
+              <div class="geo-control-title"><strong id="geoSelectedName">Sin objeto seleccionado</strong><span id="geoSelectedMode">—</span></div>
+              <div class="geo-object-list" id="geoObjectList" style="margin-top:10px"></div>
+            </div>
+
+            <div id="geoTransformControls" class="geo-card">
+              <div class="geo-section-label">Posición</div>
+              <div class="geo-slider"><label>X</label><input id="geoPosX" type="range" min="-5" max="5" step="0.1" value="0"><output id="geoPosXOut">0</output></div>
+              <div class="geo-slider"><label>Y</label><input id="geoPosY" type="range" min="-5" max="5" step="0.1" value="0"><output id="geoPosYOut">0</output></div>
+              <div class="geo-slider"><label>Z</label><input id="geoPosZ" type="range" min="-5" max="5" step="0.1" value="0"><output id="geoPosZOut">0</output></div>
+
+              <div class="geo-section-label">Tamaño</div>
+              <div class="small-actions"><button id="geoLockScale" class="mini-btn active" type="button">🔗 Proporción bloqueada</button></div>
+              <div class="geo-slider"><label>X</label><input id="geoScaleX" type="range" min="0.15" max="4" step="0.05" value="1"><output id="geoScaleXOut">1</output></div>
+              <div class="geo-slider"><label>Y</label><input id="geoScaleY" type="range" min="0.15" max="4" step="0.05" value="1"><output id="geoScaleYOut">1</output></div>
+              <div class="geo-slider"><label>Z</label><input id="geoScaleZ" type="range" min="0.15" max="4" step="0.05" value="1"><output id="geoScaleZOut">1</output></div>
+
+              <div class="geo-section-label">Rotación</div>
+              <div class="geo-slider"><label>X</label><input id="geoRotX" type="range" min="0" max="360" step="1" value="0"><output id="geoRotXOut">0°</output></div>
+              <div class="geo-slider"><label>Y</label><input id="geoRotY" type="range" min="0" max="360" step="1" value="0"><output id="geoRotYOut">0°</output></div>
+              <div class="geo-slider"><label>Z</label><input id="geoRotZ" type="range" min="0" max="360" step="1" value="0"><output id="geoRotZOut">0°</output></div>
+
+              <div class="geo-section-label">Material</div>
+              <div class="geo-slider"><label>α</label><input id="geoOpacity" type="range" min="0.08" max="1" step="0.02" value="0.62"><output id="geoOpacityOut">62%</output></div>
+              <div class="small-actions" style="margin-top:8px">
+                <button id="geoDuplicate" class="mini-btn" type="button">Duplicar</button>
+                <button id="geoDelete" class="mini-btn" type="button">Eliminar</button>
+                <button id="geoCopyXYZ" class="mini-btn" type="button">Copiar XYZ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="geo-sketch-wrap">
+          <div class="sketch-shell">
+            <div class="sketch-head"><strong>Boceto 2D de referencia</strong><span class="muted">No requiere IA</span></div>
+            <canvas id="sketchCanvas"></canvas>
+            <div class="sketch-tools">
+              <button class="mini-btn active" data-sketch-mode="free" type="button">✎ Libre</button>
+              <button class="mini-btn" data-sketch-mode="line" type="button">／ Línea</button>
+              <button class="mini-btn" data-sketch-mode="rect" type="button">▭ Rectángulo</button>
+              <button class="mini-btn" data-sketch-mode="circle" type="button">○ Círculo</button>
+              <button id="sketchClear" class="mini-btn" type="button">Limpiar</button>
+            </div>
+            <p class="geo-note">Úsalo para pensar la perspectiva con el dedo. La construcción 3D de la derecha se hace con las formas y controles superiores en tiempo real.</p>
+          </div>
+
+          <div class="geo-card">
+            <div class="geo-control-title"><strong>Puente con Pixel Paper Mapper</strong><span>Proyección 2D</span></div>
+            <p class="geo-note">La vista 3D es una proyección bidimensional. Puedes congelar exactamente el ángulo actual y convertir esa vista en una imagen medible dentro del selector normal.</p>
+            <div class="geo-bridge">
+              <button id="geoToMeasure" class="btn primary" type="button">Llevar vista a medición</button>
+              <button id="geoClearAll" class="btn" type="button">Vaciar escena</button>
+            </div>
+            <div class="geo-ai-note"><strong>IA geométrica:</strong> dejé la interfaz preparada para una futura interpretación del boceto, pero no incrusto una clave de API dentro de GitHub Pages porque quedaría pública. La conexión correcta necesita un endpoint seguro que guarde la clave fuera del iPhone y del repositorio.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>V5 · Liquid Glass · medición directa · laboratorio geométrico XYZ · funciona offline.</footer>
   </main>
 
   <script>
@@ -582,6 +814,7 @@
       $("themeLight").classList.toggle("active", t === "light");
       localStorage.setItem("ppm-theme", t);
       drawCanvas();
+      if (typeof geoDraw === "function") geoDraw();
     }
 
     function copyText(text){
@@ -1102,7 +1335,7 @@
       img.onload = () => {
         sourceImage = img; imageW = img.naturalWidth; imageH = img.naturalHeight; points=[]; activePointId=null; nextPointNumber=1; editPointId=null; view={zoom:1,panX:0,panY:0}; undoStack=[]; redoStack=[]; updateUndoRedoButtons();
         $("imageDimensions").textContent = `${imageW.toLocaleString("es-MX")} × ${imageH.toLocaleString("es-MX")} px`; $("imageInfo").classList.remove("hidden"); updateAll();
-        setTimeout(() => $("resultsPanel").scrollIntoView({behavior:"smooth", block:"start"}), 120);
+        setTimeout(() => $("pickerPanel").scrollIntoView({behavior:"smooth", block:"start"}), 120);
       };
       img.onerror = () => showWarning("No pude abrir esa imagen. Prueba con JPG o PNG si el formato no es compatible."); img.src = objectUrl;
     });
@@ -1136,7 +1369,248 @@
     document.querySelectorAll("[data-toggle]").forEach(btn => btn.addEventListener("click", () => togglePanel(btn.dataset.toggle, btn)));
     $("themeDark").addEventListener("click", () => setTheme("dark")); $("themeLight").addEventListener("click", () => setTheme("light"));
 
-    applyPreset("pref"); updateOrientationButtons(); updateCrosshairOutputs(); updateModeHelp(); updateUndoRedoButtons(); setCrosshairAction("aim"); $("crosshairPanel").classList.add("hidden"); setTheme(theme);
+
+
+    // ===== V5 · Direct workflow =====
+    function setWorkflowMode(kind){
+      const direct = kind === "direct";
+      $("directMeasureBtn").classList.toggle("active", direct);
+      $("guideMeasureBtn").classList.toggle("active", !direct);
+      if (!direct){
+        const content = $("paperPanelContent");
+        const toggle = document.querySelector('[data-toggle="paperPanelContent"]');
+        content.classList.remove("hidden");
+        if (toggle){ toggle.classList.add("active"); toggle.textContent = "▾"; }
+        setTimeout(() => $("paperPanel").scrollIntoView({behavior:"smooth",block:"start"}),80);
+      }
+    }
+    $("directMeasureBtn").addEventListener("click", () => setWorkflowMode("direct"));
+    $("guideMeasureBtn").addEventListener("click", () => setWorkflowMode("guide"));
+
+    // ===== V5 · Geometry Lab =====
+    const geoCanvas = $("geoCanvas");
+    const geoCtx = geoCanvas.getContext("2d");
+    const geoState = {
+      objects: [],
+      selectedId: null,
+      nextId: 1,
+      lockedScale: true,
+      camera: { yaw:-0.62, pitch:0.48, zoom:1.0 },
+      viewMode: "free",
+      defaultMode: "solid",
+      pointers: new Map(),
+      gesture: null,
+      moved: false
+    };
+    const geoColors = ["#6aa8ff","#70e1ff","#8fa7ff","#78d7b2","#b7a1ff","#91c7ff","#a7d8ff"];
+    const geoNames = { box:"Cubo", sphere:"Esfera", cylinder:"Cilindro", plane:"Plano", disc:"Disco", ring:"Anillo" };
+
+    function geoResize(){
+      if (!geoCanvas) return;
+      const rect = geoCanvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.max(280, rect.width || geoCanvas.parentElement.clientWidth);
+      const h = Math.max(360, rect.height || 420);
+      geoCanvas.width = Math.round(w*dpr);
+      geoCanvas.height = Math.round(h*dpr);
+      geoCtx.setTransform(dpr,0,0,dpr,0,0);
+      geoDraw();
+    }
+
+    function geoAdd(type){
+      const n = geoState.nextId++;
+      const obj = {
+        id:`g${n}`, type, name:`${geoNames[type]} ${n}`,
+        pos:{x:0,y:type === "plane" || type === "disc" || type === "ring" ? 0.35 : 1,z:0},
+        scale:{x:1,y:1,z:1}, rot:{x:type === "plane" || type === "disc" || type === "ring" ? -65 : 0,y:0,z:0},
+        opacity:0.62, mode:geoState.defaultMode, color:geoColors[(n-1)%geoColors.length]
+      };
+      geoState.objects.push(obj); geoState.selectedId = obj.id;
+      geoSyncControls(); geoRenderList(); geoDraw();
+    }
+    function geoSelected(){ return geoState.objects.find(o => o.id === geoState.selectedId) || null; }
+
+    function geoRotatePoint(p,r){
+      let x=p.x,y=p.y,z=p.z;
+      let a=r.x*Math.PI/180, c=Math.cos(a), s=Math.sin(a); [y,z]=[y*c-z*s,y*s+z*c];
+      a=r.y*Math.PI/180; c=Math.cos(a); s=Math.sin(a); [x,z]=[x*c+z*s,-x*s+z*c];
+      a=r.z*Math.PI/180; c=Math.cos(a); s=Math.sin(a); [x,y]=[x*c-y*s,x*s+y*c];
+      return {x,y,z};
+    }
+    function geoWorldPoint(p,obj){
+      const scaled={x:p.x*obj.scale.x,y:p.y*obj.scale.y,z:p.z*obj.scale.z};
+      const q=geoRotatePoint(scaled,obj.rot);
+      return {x:q.x+obj.pos.x,y:q.y+obj.pos.y,z:q.z+obj.pos.z};
+    }
+    function geoCameraPoint(p){
+      let x=p.x,y=p.y,z=p.z;
+      let a=geoState.camera.yaw,c=Math.cos(a),s=Math.sin(a); [x,z]=[x*c+z*s,-x*s+z*c];
+      a=geoState.camera.pitch;c=Math.cos(a);s=Math.sin(a); [y,z]=[y*c-z*s,y*s+z*c];
+      return {x,y,z};
+    }
+    function geoProject(p,w,h){
+      const q=geoCameraPoint(p); const distance=9.2; const denom=Math.max(2.2,distance-q.z); const f=Math.min(w,h)*1.55*geoState.camera.zoom;
+      return {x:w/2+q.x*f/denom,y:h/2-q.y*f/denom,z:q.z,scale:f/denom};
+    }
+    function geoLine3(a,b,color,width=1,alpha=1){
+      const rect=geoCanvas.getBoundingClientRect(), A=geoProject(a,rect.width,rect.height), B=geoProject(b,rect.width,rect.height);
+      geoCtx.save(); geoCtx.globalAlpha=alpha; geoCtx.strokeStyle=color; geoCtx.lineWidth=width; geoCtx.beginPath(); geoCtx.moveTo(A.x,A.y); geoCtx.lineTo(B.x,B.y); geoCtx.stroke(); geoCtx.restore();
+    }
+    function geoDrawGrid(){
+      const rect=geoCanvas.getBoundingClientRect();
+      geoCtx.save(); geoCtx.lineWidth=1;
+      for(let i=-5;i<=5;i++){
+        const alpha=i===0?.28:.08;
+        geoLine3({x:-5,y:0,z:i},{x:5,y:0,z:i},"#7fa7d8",1,alpha);
+        geoLine3({x:i,y:0,z:-5},{x:i,y:0,z:5},"#7fa7d8",1,alpha);
+      }
+      geoLine3({x:0,y:0,z:0},{x:4.5,y:0,z:0},"#ff7d83",2,.92);
+      geoLine3({x:0,y:0,z:0},{x:0,y:4.5,z:0},"#73e0a5",2,.92);
+      geoLine3({x:0,y:0,z:0},{x:0,y:0,z:4.5},"#6aa8ff",2,.95);
+      const X=geoProject({x:4.7,y:0,z:0},rect.width,rect.height),Y=geoProject({x:0,y:4.7,z:0},rect.width,rect.height),Z=geoProject({x:0,y:0,z:4.7},rect.width,rect.height);
+      geoCtx.font="800 12px -apple-system,BlinkMacSystemFont,sans-serif";
+      geoCtx.fillStyle="#ff9aa0";geoCtx.fillText("X",X.x,X.y);
+      geoCtx.fillStyle="#91efb8";geoCtx.fillText("Y",Y.x,Y.y);
+      geoCtx.fillStyle="#91bdff";geoCtx.fillText("Z",Z.x,Z.y);
+      geoCtx.restore();
+    }
+
+    function geoPoly(points,obj,fill,stroke,alpha=.5){
+      const rect=geoCanvas.getBoundingClientRect();
+      const ps=points.map(p=>geoProject(geoWorldPoint(p,obj),rect.width,rect.height));
+      geoCtx.save();geoCtx.globalAlpha=alpha;geoCtx.beginPath();geoCtx.moveTo(ps[0].x,ps[0].y);for(let i=1;i<ps.length;i++)geoCtx.lineTo(ps[i].x,ps[i].y);geoCtx.closePath();
+      if(fill){geoCtx.fillStyle=fill;geoCtx.fill();} if(stroke){geoCtx.strokeStyle=stroke;geoCtx.lineWidth=1.2;geoCtx.stroke();} geoCtx.restore();
+      return ps.reduce((a,p)=>a+p.z,0)/ps.length;
+    }
+    function geoWireLoop(points,obj,color,alpha=.85,width=1.25){
+      const rect=geoCanvas.getBoundingClientRect();const ps=points.map(p=>geoProject(geoWorldPoint(p,obj),rect.width,rect.height));
+      geoCtx.save();geoCtx.globalAlpha=alpha;geoCtx.strokeStyle=color;geoCtx.lineWidth=width;geoCtx.beginPath();geoCtx.moveTo(ps[0].x,ps[0].y);for(let i=1;i<ps.length;i++)geoCtx.lineTo(ps[i].x,ps[i].y);geoCtx.closePath();geoCtx.stroke();geoCtx.restore();
+    }
+    function geoDrawBox(obj){
+      const v=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(a=>({x:a[0],y:a[1],z:a[2]}));
+      const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
+      if(obj.mode==="wire"){
+        const edges=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+        edges.forEach(e=>geoLineObject(v[e[0]],v[e[1]],obj,obj.color,1.4,obj.opacity));
+      }else{
+        const list=faces.map(f=>({f,depth:geoFaceDepth(f.map(i=>v[i]),obj)})).sort((a,b)=>a.depth-b.depth);
+        list.forEach((item,i)=>geoPoly(item.f.map(j=>v[j]),obj,geoRGBA(obj.color,obj.opacity*(.30+i*.035)),geoRGBA(obj.color,Math.min(1,obj.opacity+.20)),1));
+      }
+    }
+    function geoLineObject(a,b,obj,color,width=1,alpha=1){
+      const A=geoWorldPoint(a,obj),B=geoWorldPoint(b,obj);geoLine3(A,B,color,width,alpha);
+    }
+    function geoFaceDepth(points,obj){return points.reduce((s,p)=>s+geoCameraPoint(geoWorldPoint(p,obj)).z,0)/points.length;}
+    function geoRGBA(hex,a){const h=hex.replace('#','');const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return `rgba(${r},${g},${b},${a})`;}
+
+    function geoCirclePoints(axis="xy",radius=1,n=48,offset=0){
+      const pts=[];for(let i=0;i<n;i++){const t=i/n*Math.PI*2;let p={x:0,y:0,z:0};if(axis==="xy"){p.x=Math.cos(t)*radius;p.y=Math.sin(t)*radius;p.z=offset;}else if(axis==="xz"){p.x=Math.cos(t)*radius;p.z=Math.sin(t)*radius;p.y=offset;}else{p.y=Math.cos(t)*radius;p.z=Math.sin(t)*radius;p.x=offset;}pts.push(p);}return pts;
+    }
+    function geoDrawPlane(obj,disc=false,ring=false){
+      if(disc||ring){
+        const pts=geoCirclePoints("xy",1,56,0);
+        if(!ring && obj.mode!=="wire") geoPoly(pts,obj,geoRGBA(obj.color,obj.opacity*.46),geoRGBA(obj.color,obj.opacity+.18),1); else geoWireLoop(pts,obj,obj.color,obj.opacity,ring?2.2:1.4);
+        if(!ring && obj.mode==="wire") geoWireLoop(pts,obj,obj.color,obj.opacity,1.4);
+      } else {
+        const pts=[{x:-1,y:-1,z:0},{x:1,y:-1,z:0},{x:1,y:1,z:0},{x:-1,y:1,z:0}];
+        if(obj.mode==="wire") geoWireLoop(pts,obj,obj.color,obj.opacity,1.4); else geoPoly(pts,obj,geoRGBA(obj.color,obj.opacity*.42),geoRGBA(obj.color,obj.opacity+.15),1);
+      }
+    }
+    function geoDrawSphere(obj){
+      const rect=geoCanvas.getBoundingClientRect();const center=geoProject(geoWorldPoint({x:0,y:0,z:0},obj),rect.width,rect.height);const edge=geoProject(geoWorldPoint({x:1,y:0,z:0},obj),rect.width,rect.height);const radius=Math.max(5,Math.hypot(edge.x-center.x,edge.y-center.y));
+      if(obj.mode!=="wire"){
+        const grad=geoCtx.createRadialGradient(center.x-radius*.35,center.y-radius*.35,radius*.08,center.x,center.y,radius);grad.addColorStop(0,geoRGBA("#ffffff",obj.opacity*.55));grad.addColorStop(.25,geoRGBA(obj.color,obj.opacity*.60));grad.addColorStop(1,geoRGBA(obj.color,obj.opacity*.12));
+        geoCtx.save();geoCtx.fillStyle=grad;geoCtx.beginPath();geoCtx.arc(center.x,center.y,radius,0,Math.PI*2);geoCtx.fill();geoCtx.strokeStyle=geoRGBA(obj.color,obj.opacity+.18);geoCtx.lineWidth=1.2;geoCtx.stroke();geoCtx.restore();
+      }
+      ["xy","xz","yz"].forEach(axis=>geoWireLoop(geoCirclePoints(axis,1,48,0),obj,obj.color,obj.mode==="wire"?obj.opacity:obj.opacity*.42,1));
+    }
+    function geoDrawCylinder(obj){
+      const top=geoCirclePoints("xz",1,36,1),bottom=geoCirclePoints("xz",1,36,-1);
+      if(obj.mode==="wire"){
+        geoWireLoop(top,obj,obj.color,obj.opacity,1.4);geoWireLoop(bottom,obj,obj.color,obj.opacity,1.4);
+        for(let i=0;i<36;i+=6)geoLineObject(bottom[i],top[i],obj,obj.color,1.2,obj.opacity);
+      }else{
+        const faces=[];for(let i=0;i<36;i++){const j=(i+1)%36;faces.push([bottom[i],bottom[j],top[j],top[i]]);}
+        faces.sort((a,b)=>geoFaceDepth(a,obj)-geoFaceDepth(b,obj)).forEach((f,i)=>geoPoly(f,obj,geoRGBA(obj.color,obj.opacity*(.20+(i/36)*.20)),geoRGBA(obj.color,obj.opacity*.55),1));
+        geoPoly(top,obj,geoRGBA(obj.color,obj.opacity*.38),geoRGBA(obj.color,obj.opacity+.12),1);geoPoly(bottom,obj,geoRGBA(obj.color,obj.opacity*.22),geoRGBA(obj.color,obj.opacity*.55),1);
+      }
+    }
+    function geoDrawObject(obj){if(obj.type==="box")geoDrawBox(obj);else if(obj.type==="sphere")geoDrawSphere(obj);else if(obj.type==="cylinder")geoDrawCylinder(obj);else if(obj.type==="plane")geoDrawPlane(obj,false,false);else if(obj.type==="disc")geoDrawPlane(obj,true,false);else if(obj.type==="ring")geoDrawPlane(obj,false,true);}
+
+    function geoDraw(){
+      if(!geoCanvas) return;const rect=geoCanvas.getBoundingClientRect();if(rect.width<10)return;
+      geoCtx.clearRect(0,0,rect.width,rect.height);
+      const grad=geoCtx.createLinearGradient(0,0,0,rect.height);grad.addColorStop(0,document.body.classList.contains("theme-light")?"#edf4fc":"#07101c");grad.addColorStop(1,document.body.classList.contains("theme-light")?"#f8fbff":"#02060c");geoCtx.fillStyle=grad;geoCtx.fillRect(0,0,rect.width,rect.height);
+      geoDrawGrid();
+      const ordered=[...geoState.objects].sort((a,b)=>geoCameraPoint(a.pos).z-geoCameraPoint(b.pos).z);ordered.forEach(geoDrawObject);
+      const sel=geoSelected();if(sel){const c=geoProject(sel.pos,rect.width,rect.height);geoCtx.save();geoCtx.strokeStyle="#ffffff";geoCtx.globalAlpha=.72;geoCtx.setLineDash([4,4]);geoCtx.beginPath();geoCtx.arc(c.x,c.y,12,0,Math.PI*2);geoCtx.stroke();geoCtx.restore();}
+      $("geoBadge").textContent=`X · Y · Z · ${geoState.viewMode==="free"?"Vista libre":"Estático"} · ${geoState.camera.zoom.toFixed(2)}×`;
+    }
+
+    function geoRenderList(){
+      const list=$("geoObjectList");list.innerHTML="";
+      if(!geoState.objects.length){list.innerHTML='<div class="muted">Añade una forma para empezar.</div>';return;}
+      geoState.objects.forEach(o=>{const row=document.createElement("div");row.className=`geo-object-row${o.id===geoState.selectedId?" active":""}`;row.innerHTML=`<button type="button" data-geo-select="${o.id}" style="width:auto;text-align:left;padding:0 9px">${o.name}</button><button type="button" data-geo-remove="${o.id}">×</button>`;list.appendChild(row);});
+    }
+    function geoSyncControls(){
+      const o=geoSelected();$("geoSelectedName").textContent=o?o.name:"Sin objeto seleccionado";$("geoSelectedMode").textContent=o?(o.mode==="wire"?"Esqueleto":"Sólido"):"—";
+      const controls=["geoPosX","geoPosY","geoPosZ","geoScaleX","geoScaleY","geoScaleZ","geoRotX","geoRotY","geoRotZ","geoOpacity","geoDuplicate","geoDelete","geoCopyXYZ"];
+      controls.forEach(id=>$(id).disabled=!o);
+      if(!o)return;
+      const vals={geoPosX:o.pos.x,geoPosY:o.pos.y,geoPosZ:o.pos.z,geoScaleX:o.scale.x,geoScaleY:o.scale.y,geoScaleZ:o.scale.z,geoRotX:o.rot.x,geoRotY:o.rot.y,geoRotZ:o.rot.z,geoOpacity:o.opacity};Object.entries(vals).forEach(([id,v])=>$(id).value=v);
+      geoUpdateOutputs();$("geoSolidBtn").classList.toggle("active",o.mode==="solid");$("geoWireBtn").classList.toggle("active",o.mode==="wire");
+    }
+    function geoUpdateOutputs(){
+      [["geoPosX","geoPosXOut",""],["geoPosY","geoPosYOut",""],["geoPosZ","geoPosZOut",""],["geoScaleX","geoScaleXOut","×"],["geoScaleY","geoScaleYOut","×"],["geoScaleZ","geoScaleZOut","×"]].forEach(([i,o,s])=>$(o).textContent=`${Number($(i).value).toFixed(2)}${s}`);
+      [["geoRotX","geoRotXOut"],["geoRotY","geoRotYOut"],["geoRotZ","geoRotZOut"]].forEach(([i,o])=>$(o).textContent=`${Math.round(Number($(i).value))}°`);$("geoOpacityOut").textContent=`${Math.round(Number($("geoOpacity").value)*100)}%`;
+    }
+    function geoSetMode(mode){const o=geoSelected();geoState.defaultMode=mode;if(o)o.mode=mode;$("geoSolidBtn").classList.toggle("active",mode==="solid");$("geoWireBtn").classList.toggle("active",mode==="wire");geoSyncControls();geoDraw();}
+    function geoSetViewMode(mode){geoState.viewMode=mode;$("geoFreeBtn").classList.toggle("active",mode==="free");$("geoStaticBtn").classList.toggle("active",mode==="static");geoDraw();}
+
+    function geoHit(clientX,clientY){const rect=geoCanvas.getBoundingClientRect();let best=null,dist=Infinity;geoState.objects.forEach(o=>{const p=geoProject(o.pos,rect.width,rect.height);const d=Math.hypot(p.x-(clientX-rect.left),p.y-(clientY-rect.top));if(d<34&&d<dist){best=o;dist=d;}});return best;}
+    function geoPointerDown(e){e.preventDefault();geoCanvas.setPointerCapture?.(e.pointerId);geoState.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});geoState.moved=false;if(geoState.pointers.size===1)geoState.gesture={x:e.clientX,y:e.clientY,yaw:geoState.camera.yaw,pitch:geoState.camera.pitch};else if(geoState.pointers.size===2){const a=[...geoState.pointers.values()];geoState.gesture={distance:Math.hypot(a[1].x-a[0].x,a[1].y-a[0].y),zoom:geoState.camera.zoom};}}
+    function geoPointerMove(e){if(!geoState.pointers.has(e.pointerId))return;e.preventDefault();geoState.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(geoState.pointers.size===2){const a=[...geoState.pointers.values()];const d=Math.hypot(a[1].x-a[0].x,a[1].y-a[0].y);if(geoState.gesture?.distance){geoState.camera.zoom=Math.max(.55,Math.min(3.2,geoState.gesture.zoom*(d/geoState.gesture.distance)));geoState.moved=true;geoDraw();}return;}if(geoState.viewMode==="free"&&geoState.gesture){const dx=e.clientX-geoState.gesture.x,dy=e.clientY-geoState.gesture.y;if(Math.hypot(dx,dy)>4){geoState.moved=true;geoState.camera.yaw=geoState.gesture.yaw+dx*.008;geoState.camera.pitch=Math.max(-1.35,Math.min(1.35,geoState.gesture.pitch+dy*.008));geoDraw();}}}
+    function geoPointerUp(e){if(!geoState.pointers.has(e.pointerId))return;e.preventDefault();const wasOne=geoState.pointers.size===1;geoState.pointers.delete(e.pointerId);if(wasOne&&!geoState.moved){const hit=geoHit(e.clientX,e.clientY);if(hit){geoState.selectedId=hit.id;geoSyncControls();geoRenderList();geoDraw();}}if(!geoState.pointers.size){geoState.gesture=null;geoState.moved=false;}}
+
+    function geoLoadSceneAsImage(){
+      geoDraw();const url=geoCanvas.toDataURL("image/png");const img=new Image();img.onload=()=>{sourceImage=img;imageW=img.naturalWidth;imageH=img.naturalHeight;objectUrl=url;points=[];activePointId=null;nextPointNumber=1;editPointId=null;view={zoom:1,panX:0,panY:0};undoStack=[];redoStack=[];$("imageDimensions").textContent=`${imageW.toLocaleString("es-MX")} × ${imageH.toLocaleString("es-MX")} px`;$("imageInfo").classList.remove("hidden");updateAll();setWorkflowMode("direct");setTimeout(()=>$("pickerPanel").scrollIntoView({behavior:"smooth",block:"start"}),120);};img.src=url;
+    }
+    function geoCopyXYZ(){const o=geoSelected();if(!o)return;copyText(`${o.name}\nCentro XYZ: (${o.pos.x.toFixed(2)}, ${o.pos.y.toFixed(2)}, ${o.pos.z.toFixed(2)})\nEscala XYZ: (${o.scale.x.toFixed(2)}, ${o.scale.y.toFixed(2)}, ${o.scale.z.toFixed(2)})\nRotación XYZ: (${o.rot.x.toFixed(0)}°, ${o.rot.y.toFixed(0)}°, ${o.rot.z.toFixed(0)}°)\nModo: ${o.mode==="wire"?"esqueleto":"sólido"}`);}
+
+    function initGeometryLab(){
+      document.querySelectorAll('[data-geo-add]').forEach(b=>b.addEventListener('click',()=>geoAdd(b.dataset.geoAdd)));
+      $("geoSolidBtn").addEventListener("click",()=>geoSetMode("solid"));$("geoWireBtn").addEventListener("click",()=>geoSetMode("wire"));$("geoFreeBtn").addEventListener("click",()=>geoSetViewMode("free"));$("geoStaticBtn").addEventListener("click",()=>geoSetViewMode("static"));
+      $("geoResetCamera").addEventListener("click",()=>{geoState.camera={yaw:-.62,pitch:.48,zoom:1};geoDraw();});
+      $("geoLockScale").addEventListener("click",()=>{geoState.lockedScale=!geoState.lockedScale;$("geoLockScale").classList.toggle("active",geoState.lockedScale);$("geoLockScale").textContent=geoState.lockedScale?"🔗 Proporción bloqueada":"⛓ Proporción libre";});
+      const bind=(id,fn)=>$(id).addEventListener("input",()=>{const o=geoSelected();if(!o)return;fn(o,Number($(id).value));geoUpdateOutputs();geoDraw();});
+      bind("geoPosX",(o,v)=>o.pos.x=v);bind("geoPosY",(o,v)=>o.pos.y=v);bind("geoPosZ",(o,v)=>o.pos.z=v);
+      ["X","Y","Z"].forEach(axis=>bind(`geoScale${axis}`,(o,v)=>{const k=axis.toLowerCase();if(geoState.lockedScale)o.scale={x:v,y:v,z:v};else o.scale[k]=v;geoSyncControls();}));
+      bind("geoRotX",(o,v)=>o.rot.x=v);bind("geoRotY",(o,v)=>o.rot.y=v);bind("geoRotZ",(o,v)=>o.rot.z=v);bind("geoOpacity",(o,v)=>o.opacity=v);
+      $("geoDuplicate").addEventListener("click",()=>{const o=geoSelected();if(!o)return;const copy=JSON.parse(JSON.stringify(o));copy.id=`g${geoState.nextId}`;copy.name=`${geoNames[copy.type]} ${geoState.nextId++}`;copy.pos.x+=.45;copy.pos.z+=.35;geoState.objects.push(copy);geoState.selectedId=copy.id;geoSyncControls();geoRenderList();geoDraw();});
+      $("geoDelete").addEventListener("click",()=>{if(!geoState.selectedId)return;geoState.objects=geoState.objects.filter(o=>o.id!==geoState.selectedId);geoState.selectedId=geoState.objects.at(-1)?.id||null;geoSyncControls();geoRenderList();geoDraw();});
+      $("geoCopyXYZ").addEventListener("click",geoCopyXYZ);$("geoToMeasure").addEventListener("click",geoLoadSceneAsImage);$("geoClearAll").addEventListener("click",()=>{geoState.objects=[];geoState.selectedId=null;geoSyncControls();geoRenderList();geoDraw();});
+      $("geoObjectList").addEventListener("click",e=>{const sel=e.target.closest('[data-geo-select]');const rem=e.target.closest('[data-geo-remove]');if(sel){geoState.selectedId=sel.dataset.geoSelect;geoSyncControls();geoRenderList();geoDraw();}if(rem){geoState.objects=geoState.objects.filter(o=>o.id!==rem.dataset.geoRemove);if(geoState.selectedId===rem.dataset.geoRemove)geoState.selectedId=geoState.objects.at(-1)?.id||null;geoSyncControls();geoRenderList();geoDraw();}});
+      geoCanvas.addEventListener("pointerdown",geoPointerDown,{passive:false});geoCanvas.addEventListener("pointermove",geoPointerMove,{passive:false});geoCanvas.addEventListener("pointerup",geoPointerUp,{passive:false});geoCanvas.addEventListener("pointercancel",geoPointerUp,{passive:false});
+      window.addEventListener("resize",()=>setTimeout(geoResize,100));
+      geoRenderList();geoSyncControls();setTimeout(geoResize,80);geoAdd("plane");geoAdd("ring");
+      initSketchPad();
+    }
+
+    // 2D sketch pad: freehand + basic shapes, entirely local/offline.
+    function initSketchPad(){
+      const sc=$("sketchCanvas"),sx=sc.getContext("2d");let mode="free",drawing=false,start=null,last=null,snapshot=null;
+      function resize(){const r=sc.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);const old=document.createElement("canvas");old.width=sc.width;old.height=sc.height;old.getContext("2d").drawImage(sc,0,0);sc.width=Math.round(r.width*d);sc.height=Math.round(250*d);sx.setTransform(d,0,0,d,0,0);drawPaper();if(old.width)sx.drawImage(old,0,0,old.width,old.height,0,0,r.width,250);}
+      function drawPaper(){const r=sc.getBoundingClientRect();sx.fillStyle="#fbfbfa";sx.fillRect(0,0,r.width,250);sx.strokeStyle="rgba(30,60,90,.08)";sx.lineWidth=1;for(let x=0;x<r.width;x+=20){sx.beginPath();sx.moveTo(x,0);sx.lineTo(x,250);sx.stroke();}for(let y=0;y<250;y+=20){sx.beginPath();sx.moveTo(0,y);sx.lineTo(r.width,y);sx.stroke();}}
+      function pos(e){const r=sc.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+      sc.addEventListener("pointerdown",e=>{e.preventDefault();sc.setPointerCapture?.(e.pointerId);drawing=true;start=last=pos(e);snapshot=sx.getImageData(0,0,sc.width,sc.height);});
+      sc.addEventListener("pointermove",e=>{if(!drawing)return;e.preventDefault();const p=pos(e);sx.strokeStyle="#17212d";sx.lineWidth=2;sx.lineCap="round";sx.lineJoin="round";if(mode==="free"){sx.beginPath();sx.moveTo(last.x,last.y);sx.lineTo(p.x,p.y);sx.stroke();last=p;}else{sx.putImageData(snapshot,0,0);sx.beginPath();if(mode==="line"){sx.moveTo(start.x,start.y);sx.lineTo(p.x,p.y);}else if(mode==="rect"){sx.rect(start.x,start.y,p.x-start.x,p.y-start.y);}else if(mode==="circle"){const rx=Math.abs(p.x-start.x),ry=Math.abs(p.y-start.y);sx.ellipse(start.x,start.y,rx,ry,0,0,Math.PI*2);}sx.stroke();}});
+      const up=()=>{drawing=false;snapshot=null;};sc.addEventListener("pointerup",up);sc.addEventListener("pointercancel",up);
+      document.querySelectorAll('[data-sketch-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.sketchMode;document.querySelectorAll('[data-sketch-mode]').forEach(x=>x.classList.toggle('active',x===b));}));
+      $("sketchClear").addEventListener("click",drawPaper);window.addEventListener("resize",()=>setTimeout(resize,120));setTimeout(resize,100);
+    }
+
+
+    applyPreset("pref"); updateOrientationButtons(); updateCrosshairOutputs(); updateModeHelp(); updateUndoRedoButtons(); setCrosshairAction("aim"); $("crosshairPanel").classList.add("hidden"); setTheme(theme); initGeometryLab();
   })();
   </script>
 
